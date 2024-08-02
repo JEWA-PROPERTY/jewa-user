@@ -38,9 +38,10 @@ export const defaultStyles = StyleSheet.create({
         alignItems: 'center',
       },
       textLink: {
-        color: Colors.primary,
+        color: Colors.brown,
         fontSize: 18,
         fontWeight: '500',
+        textAlign: 'center',
       },
       descriptionText: {
         fontSize: 18,
