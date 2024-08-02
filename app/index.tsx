@@ -19,7 +19,7 @@ export default function Home() {
             </View>
             <View style={styles.buttons}>
                 <Link
-                    href={'/login'}
+                    href={'/(auth)/login'}
                     style={[defaultStyles.pillButton, { flex: 1, backgroundColor: Colors.dark }]}
                     asChild>
                     <TouchableOpacity>

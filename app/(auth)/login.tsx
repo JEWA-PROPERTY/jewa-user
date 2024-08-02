@@ -6,7 +6,6 @@ export default function Login() {
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 80 : 0;
     const [loading, setLoading] = useState();
 
-
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
@@ -14,7 +13,6 @@ export default function Login() {
             keyboardVerticalOffset={keyboardVerticalOffset}
             className="mt-9" >
             <Text style={defaultStyles.header}>Welcome back!</Text>
-
         </KeyboardAvoidingView>
     )
 }
