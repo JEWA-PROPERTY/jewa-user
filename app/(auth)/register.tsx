@@ -23,11 +23,12 @@ export default function Register() {
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 80 : 0;
 
     async function onRegisterPress() {
-        if (password !== confirmPassword) {
-            Alert.alert("Error", "Passwords do not match");
-            return;
-        }
+        // if (password !== confirmPassword) {
+        //     Alert.alert("Error", "Passwords do not match");
+        //     return;
+        // }
         // Placeholder function for registration logic
+        router.push('/(tabs)')
     }
 
     return (
