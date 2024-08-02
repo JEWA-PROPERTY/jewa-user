@@ -1,6 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useFonts } from 'expo-font';
+import { defaultStyles } from '~/constants/Styles';
+import { Link } from 'expo-router';
+import Colors from '~/constants/Colors';
 
 export default function Home() {
     const [fontsLoaded] = useFonts({
