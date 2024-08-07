@@ -7,7 +7,7 @@ export default function Home() {
       <View style={styles.container}>
         <ComingSoon />
       </View>
-    </SafeAreaView>
+    </SafeAreaView> 
   );
 }
 

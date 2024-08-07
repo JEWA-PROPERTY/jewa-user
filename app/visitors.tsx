@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, SafeAreaView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { defaultStyles } from '~/constants/Styles';
+import { router } from 'expo-router';
 
 type Visitor = {
   id: string;
@@ -55,8 +57,11 @@ const VisitorManagementPage: React.FC = () => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={defaultStyles.container}>
       <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="black" />
+        </TouchableOpacity>
         <Text style={styles.title}>Visitor Management</Text>
         <TouchableOpacity onPress={() => setIsAddingVisitor(true)}>
           <Ionicons name="add-circle-outline" size={24} color="black" />
