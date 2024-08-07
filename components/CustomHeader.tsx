@@ -29,7 +29,7 @@ const CustomHeader = () => {
                             width: 40,
                             height: 40,
                             borderRadius: 20,
-                            backgroundColor: Colors.gray,
+                            backgroundColor: Colors.primary,
                             justifyContent: 'center',
                             alignItems: 'center',
                             marginTop: 10,
@@ -47,12 +47,12 @@ const CustomHeader = () => {
                             width: 40,
                             height: 40,
                             borderRadius: 20,
-                            backgroundColor: Colors.gray,
+                            backgroundColor: Colors.primary,
                             justifyContent: 'center',
                             alignItems: 'center',
                             marginTop: 10,
                         }}>
-                        <Ionicons name="notifications" size={24} color="black" />
+                        <Ionicons name="notifications" size={24} color="white" />
                     </TouchableOpacity>
                 </Link>
             </View>
