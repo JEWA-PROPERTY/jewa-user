@@ -137,6 +137,8 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
     marginBottom: 16,
+    paddingHorizontal: 16,
+    borderRadius: 8,
   },
   tab: {
     flex: 1,

@@ -11,7 +11,7 @@ export default function HomeTab() {
       paddingTop: headerHeight,
     }]}>
       <View className='flex flex-row m-4 pt-4'>
-        <SqButton icon='home' text='Visitors' />
+        <SqButton icon='home' text='Visitors' onPress={() => router.push('/visitors')} />
         <SqButton icon='people' text='Domestic Help' />
         <SqButton icon='notifications' text='Deliveries' onPress={() => router.push('/deliveries')} />
       </View>
