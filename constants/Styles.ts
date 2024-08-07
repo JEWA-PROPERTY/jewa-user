@@ -36,6 +36,7 @@ export const defaultStyles = StyleSheet.create({
         borderRadius: 40,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: Colors.primary,
       },
       textLink: {
         color: Colors.brown,

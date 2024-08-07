@@ -32,7 +32,7 @@ export default function HomeTab() {
           <View style={styles.actionButtons}>
             <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/visitors')}>
               <Ionicons name="person-add-outline" size={24} color="white" />
-              <Text style={styles.actionButtonText}>New Visitor Pass</Text>
+              <Text style={styles.actionButtonText}>Visitor</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/management')}>
               <Ionicons name="people-outline" size={24} color="white" />
