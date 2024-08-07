@@ -23,12 +23,45 @@ export default function Register() {
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 80 : 0;
 
     async function onRegisterPress() {
-        // if (password !== confirmPassword) {
-        //     Alert.alert("Error", "Passwords do not match");
-        //     return;
-        // }
-        // Placeholder function for registration logic
-        router.push('/(tabs)')
+        if (password !== confirmPassword) {
+            Alert.alert("Error", "Passwords do not match");
+            return;
+        }
+
+        setLoading(true);
+
+        const payload = {
+            email: email,
+            phone: phone,
+            usertype: "Resident",
+            password: password
+        };
+
+        try {
+            const response = await fetch('https://jewapropertypro.com/infinity/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Registration successful
+                Alert.alert("Success", "Registration successful");
+                router.push('/(tabs)');
+            } else {
+                // Registration failed
+                Alert.alert("Error", data.message || "Registration failed");
+            }
+        } catch (error) {
+            console.error("Registration error:", error);
+            Alert.alert("Error", "An error occurred during registration");
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -87,9 +120,8 @@ export default function Register() {
                         (email !== '' && phone !== '' && password !== '' && confirmPassword !== '') ? styles.enabled : styles.disabled,
                         { marginBottom: 20 },
                     ]}
-                    onPress={() => {
-                        onRegisterPress();
-                    }}>
+                    onPress={onRegisterPress}
+                    disabled={loading || email === '' || phone === '' || password === '' || confirmPassword === ''}>
                     {loading ? <ActivityIndicator size="small" color={'white'} /> :
                         <Text style={defaultStyles.buttonText}>Register</Text>
                     }
