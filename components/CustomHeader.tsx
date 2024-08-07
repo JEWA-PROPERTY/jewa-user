@@ -1,7 +1,7 @@
 import Colors from '~/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import { View, Text, StyleSheet, Image } from 'react-native';
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { TextInput, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { Link } from 'expo-router';
@@ -23,6 +23,23 @@ const CustomHeader = () => {
                         justifyContent: 'space-between',
                     },
                 ]}>
+                <Link href={'/'} asChild>
+                    <TouchableOpacity
+                        style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: 20,
+                            backgroundColor: Colors.gray,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            marginTop: 10,
+                        }}>
+                        <Text style={{ color: '#fff', fontWeight: '500', fontSize: 16 }}>{initials}</Text>
+                    </TouchableOpacity>
+                </Link>
+
+
+                <Text style={{ color: Colors.dark, fontSize: 20, fontWeight: '700' }}>Hse F-62</Text>
 
                 <Link href={'/'} asChild>
                     <TouchableOpacity
@@ -36,21 +53,6 @@ const CustomHeader = () => {
                             marginTop: 10,
                         }}>
                         <Ionicons name="notifications" size={24} color="black" />
-                    </TouchableOpacity>
-                </Link>
-
-                <Link href={'/'} asChild>
-                    <TouchableOpacity
-                        style={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: 20,
-                            backgroundColor: Colors.gray,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            marginTop: 10,
-                        }}>
-                        <Text style={{ color: '#fff', fontWeight: '500', fontSize: 16 }}>{initials}</Text>
                     </TouchableOpacity>
                 </Link>
             </View>
