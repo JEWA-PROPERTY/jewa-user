@@ -1,12 +1,11 @@
 import { StyleSheet, View, Text, SafeAreaView } from 'react-native';
+import ComingSoon from '~/components/ComingSoon';
 
 export default function Home() {
   return (
     <SafeAreaView>
       <View style={styles.container}>
-        <View>
-          <Text>Coming Soon</Text>
-        </View>
+        <ComingSoon />
       </View>
     </SafeAreaView>
   );
