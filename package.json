@@ -24,7 +24,6 @@
     "@shopify/react-native-skia": "1.2.3",
     "axios": "^1.7.2",
     "expo": "~51.0.25",
-    "expo-app-loading": "^2.1.1",
     "expo-blur": "^13.0.2",
     "expo-constants": "~16.0.1",
     "expo-dev-client": "~4.0.14",
