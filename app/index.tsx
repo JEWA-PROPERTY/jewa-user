@@ -7,7 +7,7 @@ import Colors from '~/constants/Colors';
 
 export default function Home() {
     const [fontsLoaded] = useFonts({
-        SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+        SpaceMono: require('../assets/fonts/Mulish-Regular.ttf'),
     });
 
     return (
