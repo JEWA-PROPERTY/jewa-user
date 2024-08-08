@@ -39,7 +39,7 @@ const CustomHeader = () => {
                 </Link>
 
 
-                <Text style={{ color: Colors.dark, fontSize: 20, fontWeight: '700' }}>Hse F-62</Text>
+                <Text style={{ color: Colors.dark, fontSize: 20, fontWeight: '700', fontFamily: 'SpaceMono' }}>Hse F-62</Text>
 
                 <Link href={'/'} asChild>
                     <TouchableOpacity

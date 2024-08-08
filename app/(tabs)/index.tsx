@@ -88,7 +88,7 @@ function ActivityScreen() {
 function HouseholdScreen() {
   return (
     <View style={styles.tabContent}>
-      <Text>Household Content</Text>
+      <Text>Coming Soon!</Text>
     </View>
   );
 }
@@ -96,7 +96,7 @@ function HouseholdScreen() {
 function CommunityScreen() {
   return (
     <View style={styles.tabContent}>
-      <Text>Community Content</Text>
+      <Text>Coming Soon!</Text>
     </View>
   );
 }
