@@ -38,14 +38,12 @@ export default function Home() {
           tabBarIndicatorStyle: { backgroundColor: Colors.primary },
           tabBarStyle: { backgroundColor: 'white' },
           tabBarBounces: false,
-          tabBarScrollEnabled: false, 
+          tabBarScrollEnabled: false,
           tabBarContentContainerStyle: { justifyContent: 'center' },
         }}
         style={{
-           backgroundColor: 'white',
-          
-
-         }}
+          backgroundColor: 'white'
+        }}
       >
         <Tab.Screen name="Activity" component={ActivityScreen} />
         <Tab.Screen name="Household" component={HouseholdScreen} />

@@ -1,7 +1,5 @@
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
-import { defaultStyles } from '~/constants/Styles';
 import { useHeaderHeight } from '@react-navigation/elements';
-import SqButton from '~/components/SqButton';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '~/constants/Colors';
@@ -70,7 +68,6 @@ export default function HomeTab() {
 
         <View style={styles.communitySection}>
           <Text style={styles.sectionTitle}>Community Updates</Text>
-          {/* would typically map through actual updates here */}
           <TouchableOpacity style={styles.updateItem} onPress={() => router.push('/')}>
             <Text style={styles.updateTitle}>Monthly Meeting</Text>
             <Text style={styles.updateSubtext}>Scheduled for next Sunday at 10 AM</Text>
@@ -94,14 +91,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16
+    padding: 16,
   },
   welcomeText: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontFamily: 'Nunito_700Bold',
   },
   subText: {
     fontSize: 16,
+    fontFamily: 'Nunito_400Regular',
     color: '#666',
   },
   quickActions: {
@@ -109,7 +107,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: 'Nunito_600SemiBold',
     marginBottom: 12,
   },
   actionButtons: {
@@ -125,6 +123,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   actionButtonText: {
+    fontSize: 14,
+    fontFamily: 'Nunito_500Medium',
     color: 'white',
     marginTop: 4,
     textAlign: 'center',
@@ -149,16 +149,17 @@ const styles = StyleSheet.create({
   },
   summaryTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'Nunito_600SemiBold',
     marginTop: 8,
   },
   summaryCount: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontFamily: 'Nunito_700Bold',
     marginTop: 4,
   },
   summarySubtext: {
     fontSize: 12,
+    fontFamily: 'Nunito_400Regular',
     color: '#666',
   },
   communitySection: {
@@ -172,10 +173,11 @@ const styles = StyleSheet.create({
   },
   updateTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'Nunito_600SemiBold',
   },
   updateSubtext: {
     fontSize: 14,
+    fontFamily: 'Nunito_400Regular',
     color: '#666',
     marginTop: 4,
   },
