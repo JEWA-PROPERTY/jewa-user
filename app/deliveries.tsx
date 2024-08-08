@@ -159,6 +159,7 @@ const styles = StyleSheet.create({
   deliveryService: {
     fontSize: 18,
     fontWeight: 'bold',
+    fontFamily: 'Nunito_700Bold',
   },
   actionButtons: {
     flexDirection: 'row',
@@ -194,6 +195,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
     marginBottom: 16,
+    fontFamily: 'Nunito_700Bold',
   },
   otpCode: {
     fontSize: 48,

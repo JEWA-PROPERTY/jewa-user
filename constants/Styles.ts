@@ -29,6 +29,7 @@ export const defaultStyles = StyleSheet.create({
       header: {
         fontSize: 40,
         fontWeight: '700',
+        fontFamily: 'Nunito_700Bold',
       },
       pillButton: {
         padding: 10,
@@ -43,16 +44,19 @@ export const defaultStyles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '500',
         textAlign: 'center',
+        fontFamily: 'Nunito_700Bold',
       },
       descriptionText: {
         fontSize: 18,
         marginTop: 20,
         color: Colors.gray,
+        fontFamily: 'Nunito_400Regular',
       },
       buttonText: {
         color: '#fff',
         fontSize: 18,
         fontWeight: '500',
+        fontFamily: 'Nunito_700Bold',
       },
       pillButtonSmall: {
         paddingHorizontal: 20,
