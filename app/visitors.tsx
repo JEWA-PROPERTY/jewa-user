@@ -69,8 +69,8 @@ const VisitorManagementPage: React.FC = () => {
   };
 
   const renderPendingVisitorItem = ({ item }: { item: Visitor }) => (
-    <TouchableOpacity 
-      style={styles.pendingVisitorItem} 
+    <TouchableOpacity
+      style={styles.pendingVisitorItem}
       onPress={() => {
         setSelectedVisitor(item);
         setShowApprovalModal(true);
@@ -110,7 +110,7 @@ const VisitorManagementPage: React.FC = () => {
           <TouchableOpacity style={styles.closeButton} onPress={() => setSelectedVisitor(null)}>
             <Ionicons name="close-circle" size={24} color={Colors.primary} />
           </TouchableOpacity>
-          
+
         </View>
       </View>
     </Modal>
@@ -142,10 +142,12 @@ const VisitorManagementPage: React.FC = () => {
   return (
     <SafeAreaView style={defaultStyles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="black" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Visitor Management</Text>
+        <View style={styles.input}>
+          <TextInput placeholder="Search visitors" />
+          <TouchableOpacity onPress={() => setIsAddingVisitor(true)}>
+            <Ionicons name="search" size={27} color="black" />
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity onPress={() => setIsAddingVisitor(true)}>
           <Ionicons name="add-circle-outline" size={24} color="black" />
         </TouchableOpacity>
@@ -294,10 +296,14 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: Colors.lightGray,
-    padding: 20,
-    borderRadius: 16,
+    padding: 10,
+    borderRadius: 10,
     fontSize: 20,
     marginBottom: 20,
+    width: '80%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   emptyText: {
     textAlign: 'center',

@@ -2,6 +2,9 @@ import { StyleSheet, View, Text, SafeAreaView } from 'react-native';
 import ComingSoon from '~/components/ComingSoon';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Colors from '~/constants/Colors';
+import VisitorManagementPage from '../visitors';
+import DeliveryManagementPage from '~/pages/Delivery';
+import IssuesReported from '~/pages/Issues';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -45,9 +48,9 @@ export default function Home() {
           backgroundColor: 'white'
         }}
       >
-        <Tab.Screen name="Activity" component={ActivityScreen} />
-        <Tab.Screen name="Household" component={HouseholdScreen} />
-        <Tab.Screen name="Community" component={CommunityScreen} />
+        <Tab.Screen name="Delivery" component={DeliveryManagementPage} />
+        <Tab.Screen name="Visitors" component={VisitorManagementPage} />
+        <Tab.Screen name="Issues" component={IssuesReported} />
       </Tab.Navigator>
     </SafeAreaView>
   );
