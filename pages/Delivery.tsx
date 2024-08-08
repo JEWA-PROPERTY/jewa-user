@@ -81,7 +81,9 @@ const DeliveryManagementPage: React.FC = () => {
             }}
         >
             <Image source={{ uri: item.avatar }} style={styles.pendingAvatar} />
-            <Text style={styles.pendingName}>{item.title}</Text>
+            <Text style={[styles.pendingName, {
+                fontFamily: 'Nunito_700Bold',
+            }]}>{item.title}</Text>
         </TouchableOpacity>
     );
 
@@ -131,7 +133,10 @@ const DeliveryManagementPage: React.FC = () => {
         >
             <View style={styles.modalContainer}>
                 <View style={styles.approvalContainer}>
-                    <Text style={styles.approvalTitle}>Approve {selectedVisitor?.title}?</Text>
+                    <Text style={[styles.approvalTitle, {
+                        fontFamily: 'Nunito_700Bold',
+                    }
+                    ]}>Approve {selectedVisitor?.title}?</Text>
                     <View style={styles.approvalButtons}>
                         <TouchableOpacity style={[styles.approvalButton, styles.approveButton]} onPress={() => approveVisitor(selectedVisitor!)}>
                             <Ionicons name="checkmark-circle" size={24} color="white" />
@@ -169,7 +174,9 @@ const DeliveryManagementPage: React.FC = () => {
       </View> */}
 
             <View style={styles.pendingVisitorsContainer}>
-                <Text style={styles.sectionTitle}>Pending Approval</Text>
+                <Text style={[styles.sectionTitle, {
+                    fontFamily: 'Nunito_700Bold',
+                }]}>Pending Approval</Text>
                 <FlatList
                     data={pendingVisitors}
                     renderItem={renderPendingVisitorItem}
@@ -180,7 +187,9 @@ const DeliveryManagementPage: React.FC = () => {
             </View>
 
             <View style={styles.approvedVisitorsContainer}>
-                <Text style={styles.sectionTitle}>Approved Visitors</Text>
+                <Text style={[styles.sectionTitle, {
+                    fontFamily: 'Nunito_700Bold',
+                }]}>Approved Visitors</Text>
                 <FlatList
                     data={visitors}
                     renderItem={renderVisitorItem}
@@ -245,6 +254,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 18,
         fontWeight: 'bold',
+        fontFamily: 'Nunito_700Bold',
     },
     pendingVisitorsContainer: {
         padding: 16,
@@ -252,6 +262,7 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 16,
         fontWeight: 'bold',
+        fontFamily: 'Nunito_700Bold',
         marginBottom: 8,
     },
     approvedVisitorsContainer: {
@@ -271,6 +282,7 @@ const styles = StyleSheet.create({
         marginTop: 8,
         fontSize: 14,
         textAlign: 'center',
+
     },
     visitorItem: {
         flexDirection: 'row',

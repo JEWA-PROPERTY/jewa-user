@@ -50,7 +50,11 @@ export default function Home() {
             <View className='bg-white' style={styles.video}>
             </View>
             <View style={{ marginTop: 80, padding: 20 }}>
-                <Text style={styles.header}>Safeguard your community, safeguard your home.</Text>
+                <Text style={[ {
+                    fontFamily: 'Nunito_700Bold',
+                    fontSize: 40,
+                    textTransform: 'uppercase',
+                }]}>Safeguard your community, safeguard your home.</Text>
             </View>
             <View style={styles.buttons}>
                 <Link
@@ -58,9 +62,10 @@ export default function Home() {
                     style={[defaultStyles.pillButton, { flex: 1, backgroundColor: Colors.dark }]}
                     asChild>
                     <TouchableOpacity>
-                        <Text style={{ color: 'white', fontSize: 22, fontWeight: '500',
+                        <Text style={{
+                            color: 'white', fontSize: 22, fontWeight: '500',
                             fontFamily: 'Nunito_700Bold'
-                         }}>Log in</Text>
+                        }}>Log in</Text>
                     </TouchableOpacity>
                 </Link>
             </View>
@@ -80,10 +85,8 @@ const styles = StyleSheet.create({
     },
     header: {
         fontSize: 36,
-        fontWeight: '900',
-        textTransform: 'uppercase',
         color: 'black',
-        fontFamily: 'Nunito_900Black',
+        fontFamily: 'Nunito_700Black',
     },
     buttons: {
         flexDirection: 'row',

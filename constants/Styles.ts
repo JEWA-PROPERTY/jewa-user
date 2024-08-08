@@ -76,6 +76,7 @@ export const defaultStyles = StyleSheet.create({
         margin: 20,
         marginBottom: 10,
         paddingLeft: 10,
+        fontFamily: 'Nunito_700Bold',
       },
       block: {
         marginHorizontal: 20,

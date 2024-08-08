@@ -53,7 +53,11 @@ export default function Login() {
             keyboardVerticalOffset={keyboardVerticalOffset}
             className="mt-9" >
             <View style={defaultStyles.container} className="mt-32">
-                <Text style={defaultStyles.header}>Welcome back!</Text>
+                <Text style={{
+                    fontSize: 40,
+                    fontFamily: 'Nunito_700Bold',
+                    textTransform: 'uppercase',
+                }}>Welcome back!</Text>
                 <Text style={defaultStyles.descriptionText}>
                     Enter your email and password to sign in
                 </Text>
