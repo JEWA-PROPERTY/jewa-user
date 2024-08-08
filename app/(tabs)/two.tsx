@@ -38,11 +38,14 @@ export default function Home() {
       <Tab.Navigator
         screenOptions={{
           tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold' },
-          tabBarIndicatorStyle: { backgroundColor: Colors.primary },
+          tabBarIndicatorStyle: { backgroundColor: Colors.primary,
+            justifyContent: 'center',
+            alignItems: 'center',
+           },
           tabBarStyle: { backgroundColor: 'white' },
           tabBarBounces: false,
           tabBarScrollEnabled: false,
-          tabBarContentContainerStyle: { justifyContent: 'center' },
+          tabBarContentContainerStyle: { justifyContent: 'center' }
         }}
         style={{
           backgroundColor: 'white'

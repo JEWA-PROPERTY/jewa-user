@@ -22,9 +22,8 @@ type Visitor = {
 const DeliveryManagementPage: React.FC = () => {
     const [visitors, setVisitors] = useState<Visitor[]>([]);
     const [pendingVisitors, setPendingVisitors] = useState<Visitor[]>([
-        { id: '1', name: 'Amazon Delivery', title: 'Delivery', avatar: 'https://i.pravatar.cc/150?u=1', type: 'delivery', phoneNumbers: ['1234567890'], otp: '123456', validUntil: new Date(), leaveAtDoor: true },
-        { id: '2', name: 'John Doe', title: 'Guest', avatar: 'https://i.pravatar.cc/150?u=2', type: 'individual', phoneNumbers: ['0987654321'], otp: '654321', validUntil: new Date(), leaveAtDoor: false },
-        { id: '3', name: 'Jane Smith', title: 'Maid', avatar: 'https://i.pravatar.cc/150?u=3', type: 'individual', phoneNumbers: ['1122334455'], otp: '789012', validUntil: new Date(), leaveAtDoor: false },
+        { id: '1', name: 'Amazon Delivery', title: 'Amazon Delivery', avatar: 'https://i.pravatar.cc/150?u=1', type: 'delivery', phoneNumbers: ['1234567890'], otp: '123456', validUntil: new Date(), leaveAtDoor: true },
+        { id: '2', name: 'Jumia Delivery', title: 'Jumia Delivery', avatar: 'https://i.pravatar.cc/150?u=2', type: 'individual', phoneNumbers: ['0987654321'], otp: '654321', validUntil: new Date(), leaveAtDoor: false },
     ]);
     const [isAddingVisitor, setIsAddingVisitor] = useState(false);
     const [visitorType, setVisitorType] = useState<'individual' | 'group' | 'delivery'>('individual');
@@ -44,14 +43,14 @@ const DeliveryManagementPage: React.FC = () => {
 
         const newVisitor: Visitor = {
             id: Date.now().toString(),
-            name: `Visitor ${visitors.length + 1}`, // Placeholder name
+            name: `Visitor ${visitors.length + 1}`,
             type: visitorType,
             eventType: visitorType === 'group' ? eventType : undefined,
             phoneNumbers: phoneNumbers.split(',').map(num => num.trim()),
             otp: generateOTP(),
-            validUntil: new Date(Date.now() + 24 * 60 * 60 * 1000), // Valid for 24 hours
-            avatar: `https://i.pravatar.cc/150?u=${Date.now()}`, // Placeholder avatar
-            leaveAtDoor: visitorType === 'delivery' ? leaveAtDoor : undefined,  // Set leaveAtDoor for deliveries
+            validUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
+            avatar: `https://i.pravatar.cc/150?u=${Date.now()}`,
+            leaveAtDoor: visitorType === 'delivery' ? leaveAtDoor : undefined,
         };
 
         setVisitors([...visitors, newVisitor]);
@@ -114,7 +113,7 @@ const DeliveryManagementPage: React.FC = () => {
                     <Text style={styles.ticketOTP}>OTP: {selectedVisitor?.otp}</Text>
                     <Text style={styles.ticketValidity}>Valid until: {selectedVisitor?.validUntil.toLocaleString()}</Text>
                     {selectedVisitor?.type === 'delivery' && (
-                        <Text style={styles.ticketLeaveAtDoor}>Leave at the door: {selectedVisitor.leaveAtDoor ? 'Yes' : 'No'}</Text>
+                        <Text style={styles.ticketLeaveAtDoor}>Leave at the Gate: {selectedVisitor.leaveAtDoor ? 'Yes' : 'No'}</Text>
                     )}
                     <TouchableOpacity style={styles.closeButton} onPress={() => setSelectedVisitor(null)}>
                         <Ionicons name="close-circle" size={24} color={Colors.primary} />
@@ -148,12 +147,12 @@ const DeliveryManagementPage: React.FC = () => {
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.approvalButton, styles.leaveButton]} onPress={() => approveVisitor(selectedVisitor!)}>
                             <Ionicons name="home" size={24} color="white" />
-                            <Text style={styles.approvalButtonText}>Leave at Door</Text>
+                            <Text style={styles.approvalButtonText}>Leave at Gate</Text>
                         </TouchableOpacity>
                     </View>
                     {selectedVisitor?.type === 'delivery' && (
                         <View style={styles.leaveAtDoorContainer}>
-                            <Text>Leave at the door: {selectedVisitor.leaveAtDoor ? 'Yes' : 'No'}</Text>
+                            <Text>Leave at the gate: {selectedVisitor.leaveAtDoor ? 'Yes' : 'No'}</Text>
                         </View>
                     )}
                 </View>
