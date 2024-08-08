@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { defaultStyles } from '~/constants/Styles';
 import { Link } from 'expo-router';
 import Colors from '~/constants/Colors';
@@ -47,14 +47,41 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
-            <View className='bg-white' style={styles.video}>
-            </View>
+
             <View style={{ marginTop: 80, padding: 20 }}>
-                <Text style={[ {
+                <View >
+                    <Image source={require('../assets/geti-bg.jpeg')} style={{
+                        width: '60%',
+                        height: '60%',
+                        marginLeft: 70,
+                        marginTop: 50,
+                        objectFit: 'contain',
+                    }} />
+                </View>
+                <Text style={[{
                     fontFamily: 'Nunito_700Bold',
                     fontSize: 40,
                     textTransform: 'uppercase',
-                }]}>Safeguard your community, safeguard your home.</Text>
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    fontWeight: '700',
+        
+                }]}>Geti App</Text>
+                <Text style={[{
+                    fontFamily: 'Nunito_400Regular',
+                    fontSize: 16,
+                    textTransform: 'uppercase',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    marginTop: 20,
+                }]}>Safeguard your community,</Text>
+                            <Text style={[{
+                    fontFamily: 'Nunito_400Regular',
+                    fontSize: 16,
+                    textTransform: 'uppercase',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                }]}>safeguard your home.</Text>
             </View>
             <View style={styles.buttons}>
                 <Link
