@@ -173,9 +173,12 @@ const DeliveryManagementPage: React.FC = () => {
       </View> */}
 
             <View style={styles.pendingVisitorsContainer}>
-                <Text style={[styles.sectionTitle, {
+                <Text style={{
                     fontFamily: 'Nunito_700Bold',
-                }]}>Pending Approval</Text>
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    marginBottom: 8,
+                }}>Pending Approval</Text>
                 <FlatList
                     data={pendingVisitors}
                     renderItem={renderPendingVisitorItem}
@@ -186,9 +189,12 @@ const DeliveryManagementPage: React.FC = () => {
             </View>
 
             <View style={styles.approvedVisitorsContainer}>
-                <Text style={[styles.sectionTitle, {
+                <Text style={{
                     fontFamily: 'Nunito_700Bold',
-                }]}>Approved Visitors</Text>
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    marginBottom: 8,
+                }}>Approved Visitors</Text>
                 <FlatList
                     data={visitors}
                     renderItem={renderVisitorItem}
@@ -259,10 +265,7 @@ const styles = StyleSheet.create({
         padding: 16,
     },
     sectionTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        fontFamily: 'Nunito_700Bold',
-        marginBottom: 8,
+
     },
     approvedVisitorsContainer: {
         flex: 1,
