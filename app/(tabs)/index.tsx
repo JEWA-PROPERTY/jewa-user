@@ -31,7 +31,7 @@ export default function HomeTab() {
         <View style={styles.quickActions}>
           <JewaText style={styles.sectionTitle}>Quick Actions</JewaText>
           <View style={styles.actionButtons}>
-            <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/visitors')}>
+            <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/(tabs)/two')}>
               <Ionicons name="person-add-outline" size={24} color="white" />
               <JewaText style={styles.actionButtonJewaText}>Visitor</JewaText>
             </TouchableOpacity>
@@ -39,7 +39,7 @@ export default function HomeTab() {
               <Ionicons name="people-outline" size={24} color="white" />
               <JewaText style={styles.actionButtonJewaText}>Manage Help</JewaText>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/')}>
+            <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/(tabs)/two')}>
               <Ionicons name="warning-outline" size={24} color="white" />
               <JewaText style={styles.actionButtonJewaText}>Report Issue</JewaText>
             </TouchableOpacity>
@@ -47,21 +47,21 @@ export default function HomeTab() {
         </View>
 
         <View style={styles.summaries}>
-          <TouchableOpacity style={styles.summaryCard} onPress={() => router.push('/')}>
+          <TouchableOpacity style={styles.summaryCard} onPress={() => router.push('/(tabs)/two')}>
             <Ionicons name="cube-outline" size={36} color="#007AFF" />
             <JewaText style={styles.summaryTitle}>Deliveries</JewaText>
             <JewaText style={styles.summaryCount}>{pendingDeliveries}</JewaText>
             <JewaText style={styles.summarySubJewaText}>Pending</JewaText>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.summaryCard} onPress={() => router.push('/')}>
+          <TouchableOpacity style={styles.summaryCard} onPress={() => router.push('/(tabs)/two')}>
             <Ionicons name="people-outline" size={36} color="#FF9500" />
             <JewaText style={styles.summaryTitle}>Visitors</JewaText>
             <JewaText style={styles.summaryCount}>{activeVisitorPasses}</JewaText>
             <JewaText style={styles.summarySubJewaText}>Active Passes</JewaText>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.summaryCard} onPress={() => router.push('/')}>
+          <TouchableOpacity style={styles.summaryCard} onPress={() => router.push('/(tabs)/two')}>
             <Ionicons name="home-outline" size={36} color="#5856D6" />
             <JewaText style={styles.summaryTitle}>Domestic Help</JewaText>
             <JewaText style={styles.summaryCount}>{domesticHelpCount}</JewaText>

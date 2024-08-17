@@ -251,9 +251,11 @@ export default function Home() {
           tabBarContentContainerStyle: { justifyContent: 'center' },
         }}
       >
-        <Tab.Screen name="Delivery" component={() => <DeliveryManagementPage />} />
-        <Tab.Screen name="Visitors" component={() => <VisitorManagementPage />} />
-        <Tab.Screen name="Issues" component={() => <ManagementScreen type="Issue" />} />
+        <Tab.Screen name="Delivery" component={DeliveryManagementPage} />
+        <Tab.Screen name="Visitors" component={VisitorManagementPage} />
+        <Tab.Screen name="Issues">
+          {() => <ManagementScreen type="Issue" />}
+        </Tab.Screen>
       </Tab.Navigator>
     </SafeAreaView>
   );
