@@ -1,7 +1,7 @@
 
 
 export default {
-    primary: '#FC4C02',   //#007AFF
+    primary: '#8abdb4',   //#007AFF
     red: '#FC2F00',
     lime: '#d64933',
     pink: '#F655FF',

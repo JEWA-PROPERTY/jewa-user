@@ -2,7 +2,7 @@ import { BlurView } from 'expo-blur';
 import '../global.css';
 
 import { Link, Stack, router } from 'expo-router';
-import { TouchableOpacity, Text, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { defaultStyles } from '~/constants/Styles';
 import Colors from '~/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';

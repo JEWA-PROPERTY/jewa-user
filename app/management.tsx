@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, Alert, Modal, SafeAreaView, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, FlatList, Alert, Modal, SafeAreaView, Image, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { defaultStyles } from '~/constants/Styles';
 import { router } from 'expo-router';
 import Colors from '~/constants/Colors';
 import { Picker } from '@react-native-picker/picker';
+import JewaText from '~/components/JewaText';
 
 type DomesticHelp = {
     id: string;
@@ -77,7 +78,7 @@ const DomesticHelpManagement: React.FC = () => {
     const renderActiveHelpItem = ({ item }: { item: DomesticHelp }) => (
         <TouchableOpacity style={styles.activeHelpItem} onPress={() => setSelectedHelp(item)}>
             <Image source={{ uri: item.avatar }} style={styles.activeAvatar} />
-            <Text style={styles.activeName}>{item.name}</Text>
+            <JewaText style={styles.activeName}>{item.name}</JewaText>
         </TouchableOpacity>
     );
 
@@ -85,9 +86,9 @@ const DomesticHelpManagement: React.FC = () => {
         <TouchableOpacity style={styles.helpItem} onPress={() => setSelectedHelp(item)}>
             <Image source={{ uri: item.avatar }} style={styles.avatar} />
             <View style={styles.helpInfo}>
-                <Text style={styles.helpName}>{item.name}</Text>
-                <Text>{item.type}</Text>
-                <Text>Status: {item.status}</Text>
+                <JewaText style={styles.helpName}>{item.name}</JewaText>
+                <JewaText>{item.type}</JewaText>
+                <JewaText>Status: {item.status}</JewaText>
             </View>
             <TouchableOpacity onPress={() => updateHelpStatus(item.id, item.status === 'in' ? 'out' : 'in')}>
                 <Ionicons name={item.status === 'in' ? 'exit-outline' : 'enter-outline'} size={24} color="black" />
@@ -107,13 +108,13 @@ const DomesticHelpManagement: React.FC = () => {
                     {selectedHelp && (
                         <>
                             <Image source={{ uri: selectedHelp.avatar }} style={styles.ticketAvatar} />
-                            <Text style={styles.ticketName}>{selectedHelp.name}</Text>
-                            <Text style={styles.ticketType}>{selectedHelp.type}</Text>
-                            <Text style={styles.ticketPhone}>Phone: {selectedHelp.phoneNumber}</Text>
-                            <Text style={styles.ticketPasscode}>Passcode: {selectedHelp.passcode}</Text>
-                            <Text style={styles.ticketStatus}>Status: {selectedHelp.status}</Text>
-                            {selectedHelp.lastEntry && <Text style={styles.ticketDate}>Last Entry: {selectedHelp.lastEntry.toLocaleString()}</Text>}
-                            {selectedHelp.lastExit && <Text style={styles.ticketDate}>Last Exit: {selectedHelp.lastExit.toLocaleString()}</Text>}
+                            <JewaText style={styles.ticketName}>{selectedHelp.name}</JewaText>
+                            <JewaText style={styles.ticketType}>{selectedHelp.type}</JewaText>
+                            <JewaText style={styles.ticketPhone}>Phone: {selectedHelp.phoneNumber}</JewaText>
+                            <JewaText style={styles.ticketPasscode}>Passcode: {selectedHelp.passcode}</JewaText>
+                            <JewaText style={styles.ticketStatus}>Status: {selectedHelp.status}</JewaText>
+                            {selectedHelp.lastEntry && <JewaText style={styles.ticketDate}>Last Entry: {selectedHelp.lastEntry.toLocaleString()}</JewaText>}
+                            {selectedHelp.lastExit && <JewaText style={styles.ticketDate}>Last Exit: {selectedHelp.lastExit.toLocaleString()}</JewaText>}
                             <TouchableOpacity style={styles.closeButton} onPress={() => setSelectedHelp(null)}>
                                 <Ionicons name="close-circle" size={24} color={Colors.primary} />
                             </TouchableOpacity>
@@ -130,14 +131,14 @@ const DomesticHelpManagement: React.FC = () => {
                 <TouchableOpacity onPress={() => router.back()}>
                     <Ionicons name="arrow-back" size={24} color="black" />
                 </TouchableOpacity>
-                <Text style={styles.title}>Domestic Help</Text>
+                <JewaText style={styles.title}>Domestic Help</JewaText>
                 <TouchableOpacity onPress={() => setIsAddingHelp(true)}>
                     <Ionicons name="add-circle-outline" size={24} color="black" />
                 </TouchableOpacity>
             </View>
 
             <View style={styles.activeHelpsContainer}>
-                <Text style={styles.sectionTitle}>Currently Active</Text>
+                <JewaText style={styles.sectionTitle}>Currently Active</JewaText>
                 <FlatList
                     data={activeHelps}
                     renderItem={renderActiveHelpItem}
@@ -148,23 +149,23 @@ const DomesticHelpManagement: React.FC = () => {
             </View>
 
             <View style={styles.allHelpsContainer}>
-                <Text style={styles.sectionTitle}>All Domestic Helps</Text>
+                <JewaText style={styles.sectionTitle}>All Domestic Helps</JewaText>
                 <FlatList
                     data={domesticHelps}
                     renderItem={renderHelpItem}
                     keyExtractor={item => item.id}
-                    ListEmptyComponent={<Text style={styles.emptyText}>No domestic help registered.</Text>}
+                    ListEmptyComponent={<JewaText style={styles.emptyJewaText}>No domestic help registered.</JewaText>}
                 />
             </View>
 
             <Modal visible={isAddingHelp} animationType="slide">
                 <SafeAreaView style={styles.addHelpForm}>
-                    <Text style={styles.modalTitle}>Add New Domestic Help</Text>
+                    <JewaText style={styles.modalTitle}>Add New Domestic Help</JewaText>
                     <TextInput
                         style={styles.input}
                         placeholder="Name"
                         value={newHelp.name}
-                        onChangeText={text => setNewHelp({ ...newHelp, name: text })}
+                        onChangeText={JewaText => setNewHelp({ ...newHelp, name: JewaText })}
                     />
                     <Picker
                         selectedValue={newHelp.type}
@@ -181,14 +182,14 @@ const DomesticHelpManagement: React.FC = () => {
                         style={styles.input}
                         placeholder="Phone Number"
                         value={newHelp.phoneNumber}
-                        onChangeText={text => setNewHelp({ ...newHelp, phoneNumber: text })}
+                        onChangeText={JewaText => setNewHelp({ ...newHelp, phoneNumber: JewaText })}
                         keyboardType="phone-pad"
                     />
                     <TouchableOpacity style={defaultStyles.pillButton} onPress={addDomesticHelp}>
-                        <Text style={defaultStyles.buttonText}>Add Domestic Help</Text>
+                        <JewaText style={defaultStyles.buttonJewaText}>Add Domestic Help</JewaText>
                     </TouchableOpacity>
                     <TouchableOpacity style={[defaultStyles.pillButton, styles.cancelButton]} onPress={() => setIsAddingHelp(false)}>
-                        <Text style={defaultStyles.buttonText}>Cancel</Text>
+                        <JewaText style={defaultStyles.buttonJewaText}>Cancel</JewaText>
                     </TouchableOpacity>
                 </SafeAreaView>
             </Modal>
@@ -257,7 +258,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-    emptyText: {
+    emptyJewaText: {
         textAlign: 'center',
         marginTop: 32,
     },

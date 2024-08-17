@@ -2,8 +2,8 @@ import {
     KeyboardAvoidingView,
     Platform,
     View,
-    Text,
-    TextInput,
+    JewaText,
+    JewaTextInput,
     StyleSheet,
     TouchableOpacity,
     ActivityIndicator,
@@ -70,12 +70,12 @@ export default function Register() {
             behavior="padding"
             keyboardVerticalOffset={keyboardVerticalOffset}>
             <View style={defaultStyles.container} className="mt-9">
-                <Text style={defaultStyles.header}>Create an Account</Text>
-                <Text style={defaultStyles.descriptionText}>
+                <JewaText style={defaultStyles.header}>Create an Account</JewaText>
+                <JewaText style={defaultStyles.descriptionJewaText}>
                     Enter your email, phone, and password to register
-                </Text>
+                </JewaText>
                 <View style={styles.inputContainer}>
-                    <TextInput
+                    <JewaTextInput
                         style={[styles.input, { flex: 1 }]}
                         placeholder="Email"
                         placeholderTextColor={Colors.gray}
@@ -85,7 +85,7 @@ export default function Register() {
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput
+                    <JewaTextInput
                         style={[styles.input, { flex: 1 }]}
                         placeholder="Phone"
                         placeholderTextColor={Colors.gray}
@@ -95,7 +95,7 @@ export default function Register() {
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput
+                    <JewaTextInput
                         style={[styles.input, { flex: 1 }]}
                         placeholder="Password"
                         placeholderTextColor={Colors.gray}
@@ -105,7 +105,7 @@ export default function Register() {
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput
+                    <JewaTextInput
                         style={[styles.input, { flex: 1 }]}
                         placeholder="Confirm Password"
                         placeholderTextColor={Colors.gray}
@@ -123,7 +123,7 @@ export default function Register() {
                     onPress={onRegisterPress}
                     disabled={loading || email === '' || phone === '' || password === '' || confirmPassword === ''}>
                     {loading ? <ActivityIndicator size="small" color={'white'} /> :
-                        <Text style={defaultStyles.buttonText}>Register</Text>
+                        <JewaText style={defaultStyles.buttonJewaText}>Register</JewaText>
                     }
                 </TouchableOpacity>
             </View>

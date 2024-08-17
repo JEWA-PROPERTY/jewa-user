@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { router, Link } from 'expo-router';
 import {
   View,
-  Text,
   StyleSheet,
   Platform,
   KeyboardAvoidingView,
@@ -15,6 +14,7 @@ import {
 import Colors from '~/constants/Colors';
 import { defaultStyles } from '~/constants/Styles';
 import { useUserStore, UserDetails } from '~/store/user-storage';
+import JewaText from '~/components/JewaText';
 
 interface LoginResponse {
   message: string;
@@ -77,10 +77,10 @@ export default function Login(): JSX.Element {
       keyboardVerticalOffset={keyboardVerticalOffset}
     >
       <View style={[defaultStyles.container, styles.container]}>
-        <Text style={styles.header}>Welcome back!</Text>
-        <Text style={defaultStyles.descriptionText}>
+        <JewaText style={styles.header}>Welcome back!</JewaText>
+        <JewaText style={defaultStyles.descriptionJewaText}>
           Enter your email and password to sign in
-        </Text>
+        </JewaText>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
@@ -114,12 +114,12 @@ export default function Login(): JSX.Element {
           {loading ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
-            <Text style={defaultStyles.buttonText}>Continue</Text>
+            <JewaText style={defaultStyles.buttonJewaText}>Continue</JewaText>
           )}
         </TouchableOpacity>
         <Link href="/(auth)/register" asChild>
           <TouchableOpacity style={styles.registerLink}>
-            <Text style={defaultStyles.textLink}>Don't have an account? Register</Text>
+            <JewaText style={defaultStyles.JewaTextLink}>Don't have an account? Register</JewaText>
           </TouchableOpacity>
         </Link>
       </View>

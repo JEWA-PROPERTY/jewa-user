@@ -6,7 +6,8 @@ import React, { useState, useRef } from 'react';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import CustomHeader from '~/components/CustomHeader';
-import { View, TouchableOpacity, StyleSheet, Animated, Text } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import JewaText from '~/components/JewaText';
 
 const FloatingActionButton = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -62,13 +63,13 @@ const FloatingActionButton = () => {
       <Animated.View style={[styles.fabOption, styles.fabOptionTop, riseAlarmStyle]}>
         <TouchableOpacity style={styles.fabOptionButton} onPress={() => console.log('Rise Alarm')}>
           <Ionicons name="alert-circle-outline" size={24} color={Colors.primary} />
-          <Text style={styles.fabOptionText}>Rise Alarm</Text>
+          <JewaText style={styles.fabOptionJewaText}>Rise Alarm</JewaText>
         </TouchableOpacity>
       </Animated.View>
       <Animated.View style={[styles.fabOption, styles.fabOptionBottom, authoriseVisitorStyle]}>
         <TouchableOpacity style={styles.fabOptionButton} onPress={() => console.log('Authorise Visitor')}>
           <Ionicons name="person-add-outline" size={24} color={Colors.primary} />
-          <Text style={styles.fabOptionText}>Authorise Visitor</Text>
+          <JewaText style={styles.fabOptionJewaText}>Authorise Visitor</JewaText>
         </TouchableOpacity>
       </Animated.View>
       <TouchableOpacity style={styles.fabButton} onPress={toggleMenu}>
@@ -167,7 +168,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
   },
-  fabOptionText: {
+  fabOptionJewaText: {
     color: 'black',
     fontSize: 14,
     fontWeight: 'bold',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, JewaText, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const issues = [
@@ -65,18 +65,18 @@ const IssueCard = ({ issue }) => (
                     size={16}
                     color="white"
                 />
-                <Text style={styles.statusText}>{issue.status}</Text>
+                <JewaText style={styles.statusJewaText}>{issue.status}</JewaText>
             </View>
             <View style={styles.typeBadge}>
                 <Ionicons name="settings" size={16} color="black" />
-                <Text style={styles.typeText}>{issue.type}</Text>
+                <JewaText style={styles.typeJewaText}>{issue.type}</JewaText>
             </View>
         </View>
-        <Text style={[styles.text, styles.locationText]}>{issue.location}</Text>
-        <Text style={[styles.text, styles.subjectText]}>Inquiry Subject: {issue.subject}</Text>
-        <Text style={[styles.text, styles.inquiryText]}>Inquiry: {issue.inquiry}</Text>
-        <Text style={[styles.text, styles.timeslotText]}>Timeslot: {issue.timeslot}</Text>
-        <Text style={[styles.text, styles.availableDateText]}>Available Date: {issue.availableDate}</Text>
+        <JewaText style={[styles.JewaText, styles.locationJewaText]}>{issue.location}</JewaText>
+        <JewaText style={[styles.JewaText, styles.subjectJewaText]}>Inquiry Subject: {issue.subject}</JewaText>
+        <JewaText style={[styles.JewaText, styles.inquiryJewaText]}>Inquiry: {issue.inquiry}</JewaText>
+        <JewaText style={[styles.JewaText, styles.timeslotJewaText]}>Timeslot: {issue.timeslot}</JewaText>
+        <JewaText style={[styles.JewaText, styles.availableDateJewaText]}>Available Date: {issue.availableDate}</JewaText>
     </View>
 );
 
@@ -92,7 +92,7 @@ const IssuesReported = () => {
 };
 
 const styles = StyleSheet.create({
-    text: {
+    JewaText: {
         fontFamily: 'Nunito_400Regular',
     },
     issuesContainer: {
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         marginRight: 8,
     },
-    statusText: {
+    statusJewaText: {
         color: 'white',
         marginLeft: 4,
         fontWeight: 'bold',
@@ -135,28 +135,28 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
         borderRadius: 12,
     },
-    typeText: {
+    typeJewaText: {
         color: 'black',
         marginLeft: 4,
         fontWeight: 'bold',
     },
-    locationText: {
+    locationJewaText: {
         marginBottom: 8,
         fontWeight: 'bold',
     },
-    subjectText: {
+    subjectJewaText: {
         marginBottom: 4,
         fontWeight: 'bold',
     },
-    inquiryText: {
+    inquiryJewaText: {
         marginBottom: 4,
         fontStyle: 'italic',
     },
-    timeslotText: {
+    timeslotJewaText: {
         marginBottom: 4,
         color: '#555',
     },
-    availableDateText: {
+    availableDateJewaText: {
         color: '#555',
     },
 });

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, SafeAreaView } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, FlatList, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import JewaText from '~/components/JewaText';
 
 type Delivery = {
   id: string;
@@ -13,11 +14,11 @@ type Delivery = {
 
 const OTPScreen: React.FC<{ delivery: Delivery; onClose: () => void }> = ({ delivery, onClose }) => (
   <View style={styles.otpScreen}>
-    <Text style={styles.otpTitle}>OTP for {delivery.service}</Text>
-    <Text style={styles.otpCode}>{delivery.otp}</Text>
-    <Text style={styles.otpInfo}>Use this code to collect your delivery from the gate</Text>
+    <JewaText style={styles.otpTitle}>OTP for {delivery.service}</JewaText>
+    <JewaText style={styles.otpCode}>{delivery.otp}</JewaText>
+    <JewaText style={styles.otpInfo}>Use this code to collect your delivery from the gate</JewaText>
     <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-      <Text style={styles.closeButtonText}>Close</Text>
+      <JewaText style={styles.closeButtonJewaText}>Close</JewaText>
     </TouchableOpacity>
   </View>
 );
@@ -53,26 +54,26 @@ const DeliveriesPage: React.FC = () => {
 
   const renderDeliveryItem = ({ item }: { item: Delivery }) => (
     <View style={styles.deliveryItem}>
-      <Text style={styles.deliveryService}>{item.service}</Text>
-      <Text>{item.date} {item.eta ? `- ETA: ${item.eta}` : ''}</Text>
+      <JewaText style={styles.deliveryService}>{item.service}</JewaText>
+      <JewaText>{item.date} {item.eta ? `- ETA: ${item.eta}` : ''}</JewaText>
       {item.status === 'incoming' ? (
         <View style={styles.actionButtons}>
           <TouchableOpacity style={styles.actionButton} onPress={() => handleDeliveryAction(item.id, 'leave')}>
-            <Text>Leave at Gate</Text>
+            <JewaText>Leave at Gate</JewaText>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton} onPress={() => handleDeliveryAction(item.id, 'allow')}>
-            <Text>Allow In</Text>
+            <JewaText>Allow In</JewaText>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton} onPress={() => handleDeliveryAction(item.id, 'deny')}>
-            <Text>Deny</Text>
+            <JewaText>Deny</JewaText>
           </TouchableOpacity>
         </View>
       ) : (
-        <Text style={styles.statusText}>{item.status.replace('_', ' ')}</Text>
+        <JewaText style={styles.statusJewaText}>{item.status.replace('_', ' ')}</JewaText>
       )}
       {item.status === 'left_at_gate' && (
         <TouchableOpacity onPress={() => setSelectedDeliveryId(item.id)}>
-          <Text style={styles.viewOtpButton}>View OTP</Text>
+          <JewaText style={styles.viewOtpButton}>View OTP</JewaText>
         </TouchableOpacity>
       )}
     </View>
@@ -88,7 +89,7 @@ const DeliveriesPage: React.FC = () => {
       ) : (
         <>
           <View style={styles.header}>
-            <Text style={styles.title}>Deliveries</Text>
+            <JewaText style={styles.title}>Deliveries</JewaText>
             <Ionicons name="notifications-outline" size={24} color="black" />
           </View>
           
@@ -97,13 +98,13 @@ const DeliveriesPage: React.FC = () => {
               style={[styles.tab, activeTab === 'incoming' && styles.activeTab]}
               onPress={() => setActiveTab('incoming')}
             >
-              <Text>Incoming</Text>
+              <JewaText>Incoming</JewaText>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.tab, activeTab === 'history' && styles.activeTab]}
               onPress={() => setActiveTab('history')}
             >
-              <Text>History</Text>
+              <JewaText>History</JewaText>
             </TouchableOpacity>
           </View>
 
@@ -111,7 +112,7 @@ const DeliveriesPage: React.FC = () => {
             data={deliveries.filter(d => activeTab === 'incoming' ? d.status === 'incoming' : d.status !== 'incoming')}
             renderItem={renderDeliveryItem}
             keyExtractor={item => item.id}
-            ListEmptyComponent={<Text style={styles.emptyText}>No deliveries at the moment.</Text>}
+            ListEmptyComponent={<JewaText style={styles.emptyJewaText}>No deliveries at the moment.</JewaText>}
           />
         </>
       )}
@@ -171,7 +172,7 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 4,
   },
-  statusText: {
+  statusJewaText: {
     marginTop: 8,
     fontStyle: 'italic',
   },
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
     color: 'blue',
     textDecorationLine: 'underline',
   },
-  emptyText: {
+  emptyJewaText: {
     textAlign: 'center',
     marginTop: 32,
   },
@@ -214,7 +215,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
   },
-  closeButtonText: {
+  closeButtonJewaText: {
     fontSize: 18,
     fontWeight: 'bold',
   },

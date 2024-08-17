@@ -1,9 +1,10 @@
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '~/constants/Colors';
 import { useUserStore } from '~/store/user-storage';
+import JewaText from '~/components/JewaText';
 
 export default function HomeTab() {
   const headerHeight = useHeaderHeight();
@@ -22,25 +23,25 @@ export default function HomeTab() {
       >
         <View style={styles.header}>
           <View>
-            <Text style={styles.welcomeText}>Welcome, {residentName}</Text>
-            <Text style={styles.subText}>House: {houseNumber}</Text>
+            <JewaText style={styles.welcomeJewaText}>Welcome, {residentName}</JewaText>
+            <JewaText style={styles.subJewaText}>House: {houseNumber}</JewaText>
           </View>
         </View>
 
         <View style={styles.quickActions}>
-          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          <JewaText style={styles.sectionTitle}>Quick Actions</JewaText>
           <View style={styles.actionButtons}>
             <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/visitors')}>
               <Ionicons name="person-add-outline" size={24} color="white" />
-              <Text style={styles.actionButtonText}>Visitor</Text>
+              <JewaText style={styles.actionButtonJewaText}>Visitor</JewaText>
             </TouchableOpacity>
             <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/management')}>
               <Ionicons name="people-outline" size={24} color="white" />
-              <Text style={styles.actionButtonText}>Manage Help</Text>
+              <JewaText style={styles.actionButtonJewaText}>Manage Help</JewaText>
             </TouchableOpacity>
             <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/')}>
               <Ionicons name="warning-outline" size={24} color="white" />
-              <Text style={styles.actionButtonText}>Report Issue</Text>
+              <JewaText style={styles.actionButtonJewaText}>Report Issue</JewaText>
             </TouchableOpacity>
           </View>
         </View>
@@ -48,35 +49,35 @@ export default function HomeTab() {
         <View style={styles.summaries}>
           <TouchableOpacity style={styles.summaryCard} onPress={() => router.push('/')}>
             <Ionicons name="cube-outline" size={36} color="#007AFF" />
-            <Text style={styles.summaryTitle}>Deliveries</Text>
-            <Text style={styles.summaryCount}>{pendingDeliveries}</Text>
-            <Text style={styles.summarySubtext}>Pending</Text>
+            <JewaText style={styles.summaryTitle}>Deliveries</JewaText>
+            <JewaText style={styles.summaryCount}>{pendingDeliveries}</JewaText>
+            <JewaText style={styles.summarySubJewaText}>Pending</JewaText>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.summaryCard} onPress={() => router.push('/')}>
             <Ionicons name="people-outline" size={36} color="#FF9500" />
-            <Text style={styles.summaryTitle}>Visitors</Text>
-            <Text style={styles.summaryCount}>{activeVisitorPasses}</Text>
-            <Text style={styles.summarySubtext}>Active Passes</Text>
+            <JewaText style={styles.summaryTitle}>Visitors</JewaText>
+            <JewaText style={styles.summaryCount}>{activeVisitorPasses}</JewaText>
+            <JewaText style={styles.summarySubJewaText}>Active Passes</JewaText>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.summaryCard} onPress={() => router.push('/')}>
             <Ionicons name="home-outline" size={36} color="#5856D6" />
-            <Text style={styles.summaryTitle}>Domestic Help</Text>
-            <Text style={styles.summaryCount}>{domesticHelpCount}</Text>
-            <Text style={styles.summarySubtext}>Registered</Text>
+            <JewaText style={styles.summaryTitle}>Domestic Help</JewaText>
+            <JewaText style={styles.summaryCount}>{domesticHelpCount}</JewaText>
+            <JewaText style={styles.summarySubJewaText}>Registered</JewaText>
           </TouchableOpacity>
         </View>
 
         <View style={styles.communitySection}>
-          <Text style={styles.sectionTitle}>Community Updates</Text>
+          <JewaText style={styles.sectionTitle}>Community Updates</JewaText>
           <TouchableOpacity style={styles.updateItem} onPress={() => router.push('/')}>
-            <Text style={styles.updateTitle}>Monthly Meeting</Text>
-            <Text style={styles.updateSubtext}>Scheduled for next Sunday at 10 AM</Text>
+            <JewaText style={styles.updateTitle}>Monthly Meeting</JewaText>
+            <JewaText style={styles.updateSubJewaText}>Scheduled for next Sunday at 10 AM</JewaText>
           </TouchableOpacity>
           <TouchableOpacity style={styles.updateItem} onPress={() => router.push('/')}>
-            <Text style={styles.updateTitle}>New Gym Equipment</Text>
-            <Text style={styles.updateSubtext}>Installation completed yesterday</Text>
+            <JewaText style={styles.updateTitle}>New Gym Equipment</JewaText>
+            <JewaText style={styles.updateSubJewaText}>Installation completed yesterday</JewaText>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -95,11 +96,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
   },
-  welcomeText: {
+  welcomeJewaText: {
     fontSize: 24,
     fontFamily: 'Nunito_700Bold',
   },
-  subText: {
+  subJewaText: {
     fontSize: 16,
     fontFamily: 'Nunito_400Regular',
     color: '#666',
@@ -124,7 +125,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 4,
   },
-  actionButtonText: {
+  actionButtonJewaText: {
     fontSize: 14,
     fontFamily: 'Nunito_500Medium',
     color: 'white',
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_700Bold',
     marginTop: 4,
   },
-  summarySubtext: {
+  summarySubJewaText: {
     fontSize: 12,
     fontFamily: 'Nunito_400Regular',
     color: '#666',
@@ -177,7 +178,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Nunito_600SemiBold',
   },
-  updateSubtext: {
+  updateSubJewaText: {
     fontSize: 14,
     fontFamily: 'Nunito_400Regular',
     color: '#666',

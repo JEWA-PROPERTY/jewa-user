@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, JewaText, FlatList, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 type Notification = {
@@ -36,21 +36,21 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ notifications, onNo
                     <Ionicons name={icon} size={24} color="#fff" />
                 </View>
                 <View style={styles.notificationContent}>
-                    <Text style={styles.notificationMessage}>{item.notification_message}</Text>
-                    <Text style={styles.notificationInfo}>
+                    <JewaText style={styles.notificationMessage}>{item.notification_message}</JewaText>
+                    <JewaText style={styles.notificationInfo}>
                         {item.type_of_delivery || item.notification_type || 'General'}
-                    </Text>
-                    <Text style={styles.notificationDate}>
+                    </JewaText>
+                    <JewaText style={styles.notificationDate}>
                         {new Date(item.created_at).toLocaleString()}
-                    </Text>
+                    </JewaText>
                 </View>
                 <View style={styles.notificationStatus}>
-                    <Text style={[
-                        styles.statusText,
+                    <JewaText style={[
+                        styles.statusJewaText,
                         item.notification_status === 'Pending' ? styles.pendingStatus : styles.respondedStatus
                     ]}>
                         {item.notification_status}
-                    </Text>
+                    </JewaText>
                     <Ionicons
                         name={item.notification_status === 'Pending' ? 'time-outline' : 'checkmark-circle-outline'}
                         size={24}
@@ -67,7 +67,7 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ notifications, onNo
                 <TouchableOpacity onPress={onBackPress}>
                     <Ionicons name="arrow-back-outline" size={24} color="#000" />
                 </TouchableOpacity>
-                <Text style={styles.header}>Notifications</Text>
+                <JewaText style={styles.header}>Notifications</JewaText>
             </View>
             {isLoading ? (
                 <ActivityIndicator size="large" color="#3498db" style={styles.activityIndicator} />
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     notificationStatus: {
         alignItems: 'center',
     },
-    statusText: {
+    statusJewaText: {
         fontSize: 12,
         fontWeight: 'bold',
         marginBottom: 4,

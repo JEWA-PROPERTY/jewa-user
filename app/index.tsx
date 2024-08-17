@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View,StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { defaultStyles } from '~/constants/Styles';
 import { Link } from 'expo-router';
 import Colors from '~/constants/Colors';
@@ -23,6 +23,7 @@ import {
     Nunito_800ExtraBold_Italic,
     Nunito_900Black_Italic,
 } from '@expo-google-fonts/nunito';
+import JewaText from '~/components/JewaText';
 
 export default function Home() {
     let [fontsLoaded] = useFonts({
@@ -56,30 +57,30 @@ export default function Home() {
                         objectFit: 'contain',
                     }} />
                 </View>
-                <Text style={[{
+                <JewaText style={[{
                     fontFamily: 'Nunito_700Bold',
                     fontSize: 40,
-                    textTransform: 'uppercase',
+                    JewaTextTransform: 'uppercase',
                     justifyContent: 'center',
                     textAlign: 'center',
                     fontWeight: '700',
         
-                }]}>Geti App</Text>
-                <Text style={[{
+                }]}>Geti App</JewaText>
+                <JewaText style={[{
                     fontFamily: 'Nunito_400Regular',
                     fontSize: 16,
-                    textTransform: 'uppercase',
+                    JewaTextTransform: 'uppercase',
                     justifyContent: 'center',
                     textAlign: 'center',
                     marginTop: 20,
-                }]}>Safeguard your community,</Text>
-                            <Text style={[{
+                }]}>Safeguard your community,</JewaText>
+                            <JewaText style={[{
                     fontFamily: 'Nunito_400Regular',
                     fontSize: 16,
-                    textTransform: 'uppercase',
+                    JewaTextTransform: 'uppercase',
                     justifyContent: 'center',
                     textAlign: 'center',
-                }]}>safeguard your home.</Text>
+                }]}>safeguard your home.</JewaText>
             </View>
             <View style={styles.buttons}>
                 <Link
@@ -87,10 +88,10 @@ export default function Home() {
                     style={[defaultStyles.pillButton, { flex: 1, backgroundColor: Colors.dark }]}
                     asChild>
                     <TouchableOpacity>
-                        <Text style={{
+                        <JewaText style={{
                             color: 'white', fontSize: 22, fontWeight: '500',
                             fontFamily: 'Nunito_700Bold'
-                        }}>Log in</Text>
+                        }}>Log in</JewaText>
                     </TouchableOpacity>
                 </Link>
             </View>

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, SafeAreaView, Image, ActivityIndicator } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, StyleSheet, FlatList, SafeAreaView, Image, ActivityIndicator } from 'react-native';
 import { defaultStyles } from '~/constants/Styles';
 import Colors from '~/constants/Colors';
 import { useUserStore } from '~/store/user-storage';
+import JewaText from '~/components/JewaText';
 
 type Visitor = {
   id: number;
@@ -79,12 +79,12 @@ const VisitorManagementPage: React.FC = () => {
         style={styles.avatar}
       />
       <View style={styles.visitorInfo}>
-        <Text style={styles.visitorName}>{item.name}</Text>
-        <Text>Phone: {item.phone}</Text>
-        <Text>OTP: {item.otp}</Text>
-        <Text>Status: {item.prebooked_status}</Text>
-        {item.event_type && <Text>Event: {item.event_type}</Text>}
-        {item.vehicle_number && <Text>Vehicle: {item.vehicle_number}</Text>}
+        <JewaText style={styles.visitorName}>{item.name}</JewaText>
+        <JewaText>Phone: {item.phone}</JewaText>
+        <JewaText>OTP: {item.otp}</JewaText>
+        <JewaText>Status: {item.prebooked_status}</JewaText>
+        {item.event_type && <JewaText>Event: {item.event_type}</JewaText>}
+        {item.vehicle_number && <JewaText>Vehicle: {item.vehicle_number}</JewaText>}
       </View>
     </View>
   );
@@ -100,7 +100,7 @@ const VisitorManagementPage: React.FC = () => {
   if (error) {
     return (
       <View style={styles.centeredContainer}>
-        <Text>{error}</Text>
+        <JewaText>{error}</JewaText>
       </View>
     );
   }
@@ -108,7 +108,7 @@ const VisitorManagementPage: React.FC = () => {
   return (
     <SafeAreaView style={defaultStyles.container}>
       <View style={styles.headerTop}>
-        <Text style={styles.sectionTitle}>Visitors</Text>
+        <JewaText style={styles.sectionTitle}>Visitors</JewaText>
         {/* <TouchableOpacity style={styles.addButton} onPress={() => console.log("Hello")}>
           <Ionicons name="add-circle-outline" size={32} color="white" />
         </TouchableOpacity> */}
@@ -117,7 +117,7 @@ const VisitorManagementPage: React.FC = () => {
         data={visitors}
         renderItem={renderVisitorItem}
         keyExtractor={item => item.id.toString()}
-        ListEmptyComponent={<Text style={styles.emptyText}>No visitors found.</Text>}
+        ListEmptyComponent={<JewaText style={styles.emptyJewaText}>No visitors found.</JewaText>}
       />
     </SafeAreaView>
   );
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  emptyText: {
+  emptyJewaText: {
     textAlign: 'center',
     marginTop: 32,
   },

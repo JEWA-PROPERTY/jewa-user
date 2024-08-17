@@ -1,20 +1,20 @@
 import Colors from '~/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, JewaText, StyleSheet, TouchableOpacity } from 'react-native';
 
 type SqBtnProps = {
   icon: typeof Ionicons.defaultProps;
-  text: string;
+  JewaText: string;
   onPress?: () => void;
 };
 
-const SqButton = ({ icon, text, onPress }: SqBtnProps) => {
+const SqButton = ({ icon, JewaText, onPress }: SqBtnProps) => {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.circle}>
         <Ionicons name={icon} size={25} color={'white'} />
       </View>
-      <Text style={styles.label}>{text}</Text>
+      <JewaText style={styles.label}>{JewaText}</JewaText>
     </TouchableOpacity>
   );
 };

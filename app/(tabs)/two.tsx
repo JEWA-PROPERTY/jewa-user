@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, TextInput, Modal, ScrollView, Image } from 'react-native';
+import { StyleSheet, View, SafeAreaView, TouchableOpacity, TextInput, Modal, ScrollView, Image } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '~/constants/Colors';
 import { Picker } from '@react-native-picker/picker';
 import VisitorManagementPage from '../visitors';
 import DeliveryManagementPage from '~/pages/Delivery';
+import JewaText from '~/components/JewaText';
 
 type TabParamList = {
   Delivery: undefined;
@@ -70,17 +71,17 @@ function ManagementScreen({ type }: { type: ItemType }) {
     <View key={item.id} style={styles.item}>
       <Image source={{ uri: item.image }} style={styles.itemImage} />
       <View style={styles.itemContent}>
-        {'trackingNumber' in item && <Text>Tracking: {item.trackingNumber}</Text>}
-        {'name' in item && <Text>Name: {item.name}</Text>}
-        {'title' in item && <Text>Title: {item.title}</Text>}
-        <Text>Status: {item.status}</Text>
+        {'trackingNumber' in item && <JewaText>Tracking: {item.trackingNumber}</JewaText>}
+        {'name' in item && <JewaText>Name: {item.name}</JewaText>}
+        {'title' in item && <JewaText>Title: {item.title}</JewaText>}
+        <JewaText>Status: {item.status}</JewaText>
       </View>
     </View>
   );
 
   const renderSection = (title: string, data: Item[]) => (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      <JewaText style={styles.sectionTitle}>{title}</JewaText>
       {data.map(renderItem)}
     </View>
   );
@@ -139,19 +140,19 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ visible, onClose, onAdd, ty
             <TextInput
               style={styles.input}
               placeholder="Tracking Number"
-              onChangeText={(text) => setItemData({ ...itemData, trackingNumber: text })}
+              onChangeText={(JewaText) => setItemData({ ...itemData, trackingNumber: JewaText })}
             />
             <TextInput
               style={styles.input}
               placeholder="Courier"
-              onChangeText={(text) => setItemData({ ...itemData, courier: text })}
+              onChangeText={(JewaText) => setItemData({ ...itemData, courier: JewaText })}
             />
             <TouchableOpacity
               style={styles.checkbox}
               onPress={() => setItemData({ ...itemData, leaveAtDoor: !(itemData as DeliveryItem).leaveAtDoor })}
             >
-              <Text>Leave at Door</Text>
-              {(itemData as DeliveryItem).leaveAtDoor && <Text style={styles.checkmark}>✓</Text>}
+              <JewaText>Leave at Door</JewaText>
+              {(itemData as DeliveryItem).leaveAtDoor && <JewaText style={styles.checkmark}>✓</JewaText>}
             </TouchableOpacity>
           </>
         );
@@ -161,7 +162,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ visible, onClose, onAdd, ty
             <TextInput
               style={styles.input}
               placeholder="Visitor Name"
-              onChangeText={(text) => setItemData({ ...itemData, name: text })}
+              onChangeText={(JewaText) => setItemData({ ...itemData, name: JewaText })}
             />
             <Picker
               selectedValue={(itemData as VisitorItem).type}
@@ -174,7 +175,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ visible, onClose, onAdd, ty
             <TextInput
               style={styles.input}
               placeholder="Phone Number"
-              onChangeText={(text) => setItemData({ ...itemData, phoneNumber: text })}
+              onChangeText={(JewaText) => setItemData({ ...itemData, phoneNumber: JewaText })}
             />
           </>
         );
@@ -184,14 +185,14 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ visible, onClose, onAdd, ty
             <TextInput
               style={styles.input}
               placeholder="Issue Title"
-              onChangeText={(text) => setItemData({ ...itemData, title: text })}
+              onChangeText={(JewaText) => setItemData({ ...itemData, title: JewaText })}
             />
             <TextInput
-              style={[styles.input, styles.textArea]}
+              style={[styles.input, styles.JewaTextArea]}
               placeholder="Issue Description"
               multiline
               numberOfLines={4}
-              onChangeText={(text) => setItemData({ ...itemData, description: text })}
+              onChangeText={(JewaText) => setItemData({ ...itemData, description: JewaText })}
             />
             <Picker
               selectedValue={(itemData as IssueItem).priority}
@@ -222,14 +223,14 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ visible, onClose, onAdd, ty
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Add New {type}</Text>
+          <JewaText style={styles.modalTitle}>Add New {type}</JewaText>
           {renderFields()}
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={onClose}>
-              <Text style={styles.buttonText}>Cancel</Text>
+              <JewaText style={styles.buttonJewaText}>Cancel</JewaText>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.button, styles.addButton]} onPress={handleAdd}>
-              <Text style={[styles.buttonText, styles.addButtonText]}>Add</Text>
+              <JewaText style={[styles.buttonJewaText, styles.addButtonJewaText]}>Add</JewaText>
             </TouchableOpacity>
           </View>
         </View>
@@ -357,7 +358,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
   },
-  textArea: {
+  JewaTextArea: {
     height: 100,
     textAlignVertical: 'top',
   },
@@ -388,14 +389,14 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: Colors.lightGray,
   },
-  buttonText: {
+  buttonJewaText: {
     fontSize: 16,
     fontWeight: 'bold',
   },
   addButton: {
     backgroundColor: Colors.primary,
   },
-  addButtonText: {
+  addButtonJewaText: {
     color: 'white',
   },
 });

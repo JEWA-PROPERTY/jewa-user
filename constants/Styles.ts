@@ -39,20 +39,20 @@ export const defaultStyles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: Colors.primary,
       },
-      textLink: {
+      JewaTextLink: {
         color: Colors.brown,
         fontSize: 18,
         fontWeight: '500',
         textAlign: 'center',
         fontFamily: 'Nunito_700Bold',
       },
-      descriptionText: {
+      descriptionJewaText: {
         fontSize: 18,
         marginTop: 20,
         color: Colors.gray,
         fontFamily: 'Nunito_400Regular',
       },
-      buttonText: {
+      buttonJewaText: {
         color: '#fff',
         fontSize: 18,
         fontWeight: '500',
@@ -65,7 +65,7 @@ export const defaultStyles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
       },
-      buttonTextSmall: {
+      buttonJewaTextSmall: {
         color: '#fff',
         fontSize: 16,
         fontWeight: '500',

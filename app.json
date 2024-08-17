@@ -20,7 +20,7 @@
       [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/Mulish-Regular.ttf"]
+          "fonts": ["node_modules/@expo-google-fonts/nunito/*"]
         }
       ]
     ],

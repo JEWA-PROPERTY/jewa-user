@@ -1,10 +1,11 @@
 import Colors from '~/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { Link } from 'expo-router';
+import JewaText from './JewaText';
 
 const CustomHeader = () => {
     const { top } = useSafeAreaInsets();
@@ -34,12 +35,11 @@ const CustomHeader = () => {
                             alignItems: 'center',
                             marginTop: 10,
                         }}>
-                        <Text style={{ color: '#fff', fontWeight: '500', fontSize: 16 }}>{initials}</Text>
+                        <JewaText style={{ color: '#fff', fontWeight: '500', fontSize: 16 }}>{initials}</JewaText>
                     </TouchableOpacity>
                 </Link>
 
-
-                <Text style={{ color: Colors.dark, fontSize: 20, fontWeight: '700', fontFamily: 'SpaceMono' }}>Hse F-62</Text>
+                <JewaText style={{ color: Colors.dark, fontSize: 20, fontWeight: '700', fontFamily: 'Nunito_700Bold' }}>Hse F-62</JewaText>
 
                 <Link href={'/notifications'} asChild>
                     <TouchableOpacity

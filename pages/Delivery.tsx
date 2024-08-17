@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, SafeAreaView, Image, Modal, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, FlatList, SafeAreaView, Image, Modal, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { defaultStyles } from '~/constants/Styles';
 import Colors from '~/constants/Colors';
 import { useUserStore } from '~/store/user-storage';
+import JewaText from '~/components/JewaText';
 
 type Delivery = {
     id: string;
@@ -99,7 +100,7 @@ const DeliveryManagementPage: React.FC = () => {
             }}
         >
             <Image source={{ uri: item.avatar }} style={styles.pendingAvatar} />
-            <Text style={styles.pendingName}>{item.title}</Text>
+            <JewaText style={styles.pendingName}>{item.title}</JewaText>
         </TouchableOpacity>
     );
 
@@ -107,9 +108,9 @@ const DeliveryManagementPage: React.FC = () => {
         <TouchableOpacity style={styles.deliveryItem} onPress={() => setSelectedDelivery(item)}>
             <Image source={{ uri: item.avatar }} style={styles.avatar} />
             <View style={styles.deliveryInfo}>
-                <Text style={styles.deliveryName}>{item.name}</Text>
-                <Text>Delivery</Text>
-                <Text>OTP: {item.otp}</Text>
+                <JewaText style={styles.deliveryName}>{item.name}</JewaText>
+                <JewaText>Delivery</JewaText>
+                <JewaText>OTP: {item.otp}</JewaText>
             </View>
         </TouchableOpacity>
     );
@@ -124,11 +125,11 @@ const DeliveryManagementPage: React.FC = () => {
             <View style={styles.modalContainer}>
                 <View style={styles.ticketContainer}>
                     <Image source={{ uri: selectedDelivery?.avatar }} style={styles.ticketAvatar} />
-                    <Text style={styles.ticketName}>{selectedDelivery?.name}</Text>
-                    <Text style={styles.ticketType}>Delivery</Text>
-                    <Text style={styles.ticketOTP}>OTP: {selectedDelivery?.otp}</Text>
-                    <Text style={styles.ticketValidity}>Valid until: {selectedDelivery?.validUntil.toLocaleString()}</Text>
-                    <Text style={styles.ticketLeaveAtDoor}>Leave at the Gate: {selectedDelivery?.leaveAtDoor ? 'Yes' : 'No'}</Text>
+                    <JewaText style={styles.ticketName}>{selectedDelivery?.name}</JewaText>
+                    <JewaText style={styles.ticketType}>Delivery</JewaText>
+                    <JewaText style={styles.ticketOTP}>OTP: {selectedDelivery?.otp}</JewaText>
+                    <JewaText style={styles.ticketValidity}>Valid until: {selectedDelivery?.validUntil.toLocaleString()}</JewaText>
+                    <JewaText style={styles.ticketLeaveAtDoor}>Leave at the Gate: {selectedDelivery?.leaveAtDoor ? 'Yes' : 'No'}</JewaText>
                     <TouchableOpacity style={styles.closeButton} onPress={() => setSelectedDelivery(null)}>
                         <Ionicons name="close-circle" size={24} color={Colors.primary} />
                     </TouchableOpacity>
@@ -146,15 +147,15 @@ const DeliveryManagementPage: React.FC = () => {
         >
             <View style={styles.modalContainer}>
                 <View style={styles.approvalContainer}>
-                    <Text style={styles.approvalTitle}>Approve {selectedDelivery?.title}?</Text>
+                    <JewaText style={styles.approvalTitle}>Approve {selectedDelivery?.title}?</JewaText>
                     <View style={styles.approvalButtons}>
                         <TouchableOpacity style={[styles.approvalButton, styles.approveButton]} onPress={() => selectedDelivery && approveDelivery(selectedDelivery)}>
                             <Ionicons name="checkmark-circle" size={24} color="white" />
-                            <Text style={styles.approvalButtonText}>Approve</Text>
+                            <JewaText style={styles.approvalButtonJewaText}>Approve</JewaText>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.approvalButton, styles.denyButton]} onPress={() => selectedDelivery && denyDelivery(selectedDelivery.id)}>
                             <Ionicons name="close-circle" size={24} color="white" />
-                            <Text style={styles.approvalButtonText}>Deny</Text>
+                            <JewaText style={styles.approvalButtonJewaText}>Deny</JewaText>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -166,7 +167,7 @@ const DeliveryManagementPage: React.FC = () => {
         return (
             <SafeAreaView style={[defaultStyles.container, styles.centerContent]}>
                 <ActivityIndicator size="large" color={Colors.primary} />
-                <Text style={styles.loadingText}>Loading deliveries...</Text>
+                <JewaText style={styles.loadingJewaText}>Loading deliveries...</JewaText>
             </SafeAreaView>
         );
     }
@@ -174,9 +175,9 @@ const DeliveryManagementPage: React.FC = () => {
     if (error) {
         return (
             <SafeAreaView style={[defaultStyles.container, styles.centerContent]}>
-                <Text style={styles.errorText}>Error: {error}</Text>
+                <JewaText style={styles.errorJewaText}>Error: {error}</JewaText>
                 <TouchableOpacity onPress={fetchDeliveries} style={styles.retryButton}>
-                    <Text style={styles.retryButtonText}>Retry</Text>
+                    <JewaText style={styles.retryButtonJewaText}>Retry</JewaText>
                 </TouchableOpacity>
             </SafeAreaView>
         );
@@ -185,7 +186,7 @@ const DeliveryManagementPage: React.FC = () => {
     return (
         <SafeAreaView style={defaultStyles.container}>
             <View style={styles.pendingDeliveriesContainer}>
-                <Text style={styles.sectionTitle}>Pending Approval</Text>
+                <JewaText style={styles.sectionTitle}>Pending Approval</JewaText>
                 {pendingDeliveries.length > 0 ? (
                     <FlatList
                         data={pendingDeliveries}
@@ -195,12 +196,12 @@ const DeliveryManagementPage: React.FC = () => {
                         showsHorizontalScrollIndicator={false}
                     />
                 ) : (
-                    <Text style={styles.noDeliveriesText}>No pending deliveries</Text>
+                    <JewaText style={styles.noDeliveriesJewaText}>No pending deliveries</JewaText>
                 )}
             </View>
 
             <View style={styles.approvedDeliveriesContainer}>
-                <Text style={styles.sectionTitle}>Approved Deliveries</Text>
+                <JewaText style={styles.sectionTitle}>Approved Deliveries</JewaText>
                 {deliveries.length > 0 ? (
                     <FlatList
                         data={deliveries}
@@ -208,7 +209,7 @@ const DeliveryManagementPage: React.FC = () => {
                         keyExtractor={item => item.id}
                     />
                 ) : (
-                    <Text style={styles.noDeliveriesText}>No approved deliveries</Text>
+                    <JewaText style={styles.noDeliveriesJewaText}>No approved deliveries</JewaText>
                 )}
             </View>
 
@@ -223,11 +224,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    loadingText: {
+    loadingJewaText: {
         marginTop: 10,
         fontSize: 16,
     },
-    errorText: {
+    errorJewaText: {
         fontSize: 16,
         color: 'red',
         marginBottom: 10,
@@ -352,11 +353,11 @@ const styles = StyleSheet.create({
     denyButton: {
         backgroundColor: 'red',
     },
-    approvalButtonText: {
+    approvalButtonJewaText: {
         color: 'white',
         fontWeight: 'bold',
     },
-    noDeliveriesText: {
+    noDeliveriesJewaText: {
         fontStyle: 'italic',
         color: '#888',
         textAlign: 'center',
@@ -368,7 +369,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginTop: 20,
     },
-    retryButtonText: {
+    retryButtonJewaText: {
         color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',

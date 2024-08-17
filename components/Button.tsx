@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { JewaText, TouchableOpacity, TouchableOpacityProps } from 'react-native';
 
 type ButtonProps = {
   title: string;
@@ -12,7 +12,7 @@ export const Button = forwardRef<TouchableOpacity, ButtonProps>(
         ref={ref}
         {...touchableProps}
         className={`${styles.button} ${touchableProps.className}`}>
-        <Text className={styles.buttonText}>{title}</Text>
+        <JewaText className={styles.buttonJewaText}>{title}</JewaText>
       </TouchableOpacity>
     );
   }
@@ -20,5 +20,5 @@ export const Button = forwardRef<TouchableOpacity, ButtonProps>(
 
 const styles = {
   button: 'items-center bg-indigo-500 rounded-[28px] shadow-md p-4',
-  buttonText: 'text-white text-lg font-semibold text-center',
+  buttonJewaText: 'JewaText-white JewaText-lg font-semibold JewaText-center',
 };
