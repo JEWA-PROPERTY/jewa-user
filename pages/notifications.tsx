@@ -17,7 +17,7 @@ type NotificationPageProps = {
     notifications: Notification[];
     onNotificationPress: (notification: Notification) => void;
     onBackPress: () => void;
-    isLoading: boolean;
+isLoading: boolean;
 };
 
 const NotificationPage: React.FC<NotificationPageProps> = ({ notifications, onNotificationPress, onBackPress, isLoading }) => {

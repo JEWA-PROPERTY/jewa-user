@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, JewaText, FlatList, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import JewaText from '~/components/JewaText';
+import { useUserStore } from '~/store/user-storage';
+import axios from 'axios';
 
 type Notification = {
     id: number;
@@ -13,17 +16,77 @@ type Notification = {
 };
 
 type NotificationPageProps = {
-    notifications: Notification[];
     onNotificationPress: (notification: Notification) => void;
     onBackPress: () => void;
-    isLoading: boolean;
 };
 
-const NotificationPage: React.FC<NotificationPageProps> = ({ notifications, onNotificationPress, onBackPress, isLoading }) => {
+
+const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress, onBackPress }) => {
+    const [notifications, setNotifications] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+    const {user} = useUserStore();
+
+    const fetchNotifications = async () => {
+        const response = await axios.post('https://jewapropertypro.com/infinity/api/allnotifications', {
+            resident_id: user?.userid
+        });
+        console.log(response.data);
+        const data = response.data;
+        setNotifications(data.message);
+    };
+    
+    useEffect(() => {
+        loadNotifications();
+    }, []);
+
+    const loadNotifications = async () => {
+        setIsLoading(true);
+        try {
+            const fetchedNotifications = await fetchNotifications();
+            const sortedNotifications = fetchedNotifications.sort((a, b) => 
+                new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            );
+            setNotifications(sortedNotifications);
+        } catch (error) {
+            // console.error('Error fetching notifications:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const notificationTypeConfig: Record<string, { color: string; icon: string }> = {
         General: { color: '#3498db', icon: 'notifications-outline' },
         Electronics: { color: '#e67e22', icon: 'bulb' },
         Visitor: { color: '#2ecc71', icon: 'person-outline' },
+        Delivery: { color: '#9b59b6', icon: 'cube-outline' },
+    };
+
+    const handleNotificationPress = (notification: Notification) => {
+        setSelectedNotification(notification);
+        setModalVisible(true);
+        onNotificationPress(notification);
+    };
+
+    const handleModalClose = () => {
+        setModalVisible(false);
+        setSelectedNotification(null);
+    };
+
+    const handleApprove = () => {
+        // Handle approve logic
+        handleModalClose();
+    };
+
+    const handleDeny = () => {
+        // Handle deny logic
+        handleModalClose();
+    };
+
+    const handleLeaveAtGate = () => {
+        // Handle leave at gate logic
+        handleModalClose();
     };
 
     const renderNotificationItem = ({ item }: { item: Notification }) => {
@@ -31,7 +94,7 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ notifications, onNo
         const { color, icon } = notificationTypeConfig[notificationType] || notificationTypeConfig.General;
 
         return (
-            <TouchableOpacity style={styles.notificationItem} onPress={() => onNotificationPress(item)}>
+            <TouchableOpacity style={styles.notificationItem} onPress={() => handleNotificationPress(item)}>
                 <View style={[styles.iconCircle, { backgroundColor: color }]}>
                     <Ionicons name={icon} size={24} color="#fff" />
                 </View>
@@ -46,7 +109,7 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ notifications, onNo
                 </View>
                 <View style={styles.notificationStatus}>
                     <JewaText style={[
-                        styles.statusJewaText,
+                        styles.statusText,
                         item.notification_status === 'Pending' ? styles.pendingStatus : styles.respondedStatus
                     ]}>
                         {item.notification_status}
@@ -60,6 +123,38 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ notifications, onNo
             </TouchableOpacity>
         );
     };
+
+    const renderModal = () => (
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={handleModalClose}
+        >
+            <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                    <JewaText style={styles.modalTitle}>Notification Details</JewaText>
+                    <JewaText style={styles.modalMessage}>{selectedNotification?.notification_message}</JewaText>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={styles.button} onPress={handleApprove}>
+                            <JewaText style={styles.buttonText}>Approve</JewaText>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button} onPress={handleDeny}>
+                            <JewaText style={styles.buttonText}>Deny</JewaText>
+                        </TouchableOpacity>
+                        {(selectedNotification?.notification_type === "Delivery" || selectedNotification?.type_of_delivery === "Delivery") && (
+                            <TouchableOpacity style={styles.button} onPress={handleLeaveAtGate}>
+                                <JewaText style={styles.buttonText}>Leave at Gate</JewaText>
+                            </TouchableOpacity>
+                        )}
+                    </View>
+                    <TouchableOpacity style={styles.closeButton} onPress={handleModalClose}>
+                        <Ionicons name="close" size={24} color="#000" />
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </Modal>
+    );
 
     return (
         <View style={styles.container}>
@@ -77,8 +172,11 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ notifications, onNo
                     renderItem={renderNotificationItem}
                     keyExtractor={(item) => item.id.toString()}
                     contentContainerStyle={styles.listContainer}
+                    refreshing={isLoading}
+                    onRefresh={loadNotifications}
                 />
             )}
+            {renderModal()}
         </View>
     );
 };
@@ -144,7 +242,7 @@ const styles = StyleSheet.create({
     notificationStatus: {
         alignItems: 'center',
     },
-    statusJewaText: {
+    statusText: {
         fontSize: 12,
         fontWeight: 'bold',
         marginBottom: 4,
@@ -159,6 +257,49 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 8,
+        padding: 20,
+        width: '80%',
+        alignItems: 'center',
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    modalMessage: {
+        fontSize: 16,
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+    },
+    button: {
+        backgroundColor: '#3498db',
+        padding: 10,
+        borderRadius: 5,
+        marginHorizontal: 5,
+    },
+    buttonText: {
+        color: '#FFFFFF',
+        fontWeight: 'bold',
+    },
+    closeButton: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
     },
 });
 
