@@ -4,7 +4,6 @@ import { defaultStyles } from '~/constants/Styles';
 import { Link } from 'expo-router';
 import Colors from '~/constants/Colors';
 
-import AppLoading from 'expo-app-loading';
 import {
     useFonts,
     Nunito_200ExtraLight,
@@ -47,7 +46,6 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
-
             <View style={{ marginTop: 40, padding: 20 }}>
                 <View >
                     <Image source={require('../assets/geti-bg.jpeg')} style={{

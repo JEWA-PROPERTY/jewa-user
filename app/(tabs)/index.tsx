@@ -3,9 +3,11 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '~/constants/Colors';
+import { useUserStore } from '~/store/user-storage';
 
 export default function HomeTab() {
   const headerHeight = useHeaderHeight();
+  const {user} = useUserStore();
 
   const pendingDeliveries = 3;
   const activeVisitorPasses = 5;
