@@ -26,6 +26,7 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
     const [isLoading, setIsLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+    const [responding, setResponding] = useState<boolean>(false)
     const {user} = useUserStore();
 
     const fetchNotifications = async () => {
@@ -36,6 +37,24 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
         const data = response.data;
         setNotifications(data.message);
     };
+
+    async function respondToNotification(id: number, response_id: number) {
+        try {
+            setResponding(true);
+            const response = await axios.post('https://jewapropertypro.com/infinity/api/updatevisitorrequest', {
+                "notif_id": id,
+                "status": response_id
+            });
+            console.log(response)
+            setResponding(false);
+            fetchNotifications()
+        } catch (error) {
+            setResponding(false)
+            console.error('Error responding to notification:', error);
+        } finally {
+               setModalVisible(false);
+        }
+    }
     
     useEffect(() => {
         loadNotifications();
@@ -53,6 +72,7 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
             // console.error('Error fetching notifications:', error);
         } finally {
             setIsLoading(false);
+            
         }
     };
 
@@ -74,18 +94,20 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
         setSelectedNotification(null);
     };
 
-    const handleApprove = () => {
-        // Handle approve logic
+    const handleApprove = async () => {
+        await respondToNotification(selectedNotification?.id!, 2 )
         handleModalClose();
     };
 
-    const handleDeny = () => {
+    const handleDeny = async () => {
         // Handle deny logic
+        await respondToNotification(selectedNotification?.id!, 3 )
         handleModalClose();
     };
 
-    const handleLeaveAtGate = () => {
+    const handleLeaveAtGate = async() => {
         // Handle leave at gate logic
+        await respondToNotification(selectedNotification?.id!, 1 )
         handleModalClose();
     };
 
@@ -135,19 +157,26 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
                 <View style={styles.modalContent}>
                     <JewaText style={styles.modalTitle}>Notification Details</JewaText>
                     <JewaText style={styles.modalMessage}>{selectedNotification?.notification_message}</JewaText>
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.button} onPress={handleApprove}>
-                            <JewaText style={styles.buttonText}>Approve</JewaText>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} onPress={handleDeny}>
-                            <JewaText style={styles.buttonText}>Deny</JewaText>
-                        </TouchableOpacity>
-                        {(selectedNotification?.notification_type === "Delivery" || selectedNotification?.type_of_delivery === "Delivery") && (
-                            <TouchableOpacity style={styles.button} onPress={handleLeaveAtGate}>
-                                <JewaText style={styles.buttonText}>Leave at Gate</JewaText>
+                    {responding ? (
+                        <ActivityIndicator size="large" color="#3498db" style={styles.respondingSpinner} />
+                    ) : (
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity style={[styles.button, styles.approveButton]} onPress={handleApprove}>
+                                <Ionicons name="checkmark-circle-outline" size={20} color="#fff" />
+                                <JewaText style={styles.buttonText}>Approve</JewaText>
                             </TouchableOpacity>
-                        )}
-                    </View>
+                            <TouchableOpacity style={[styles.button, styles.denyButton]} onPress={handleDeny}>
+                                <Ionicons name="close-circle-outline" size={20} color="#fff" />
+                                <JewaText style={styles.buttonText}>Deny</JewaText>
+                            </TouchableOpacity>
+                            {(selectedNotification?.notification_type === "Delivery" || selectedNotification?.type_of_delivery === "Delivery") && (
+                                <TouchableOpacity style={[styles.button, styles.leaveAtGateButton]} onPress={handleLeaveAtGate}>
+                                    <Ionicons name="home-outline" size={20} color="#fff" />
+                                    <JewaText style={styles.buttonText}>Leave at Gate</JewaText>
+                                </TouchableOpacity>
+                            )}
+                        </View>
+                    )}
                     <TouchableOpacity style={styles.closeButton} onPress={handleModalClose}>
                         <Ionicons name="close" size={24} color="#000" />
                     </TouchableOpacity>
@@ -282,24 +311,51 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     buttonContainer: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'space-around',
         width: '100%',
-    },
-    button: {
-        backgroundColor: '#3498db',
-        padding: 10,
-        borderRadius: 5,
-        marginHorizontal: 5,
-    },
-    buttonText: {
-        color: '#FFFFFF',
-        fontWeight: 'bold',
+        gap: 3
     },
     closeButton: {
         position: 'absolute',
         top: 10,
         right: 10,
+    },
+    button: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 10,
+        borderRadius: 5,
+        marginHorizontal: 5,
+        minWidth: 100,
+    },
+    buttonText: {
+        color: '#FFFFFF',
+        fontWeight: 'bold',
+        marginLeft: 5,
+    },
+    approveButton: {
+        backgroundColor: '#2ecc71', // Green
+        display: "flex",
+        justifyContent: "space-evenly", 
+        paddingHorizontal: 15
+    },
+    denyButton: {
+        backgroundColor: '#e74c3c', // Red
+        display: "flex",
+        justifyContent: "space-evenly", 
+        paddingHorizontal: 15
+    },
+    leaveAtGateButton: {
+        backgroundColor: '#3498db', // Blue
+        display: "flex",
+        justifyContent: "space-evenly", 
+        paddingHorizontal: 15
+
+    },
+    respondingSpinner: {
+        marginVertical: 20,
     },
 });
 
