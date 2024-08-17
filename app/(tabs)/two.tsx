@@ -4,6 +4,8 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '~/constants/Colors';
 import { Picker } from '@react-native-picker/picker';
+import VisitorManagementPage from '../visitors';
+import DeliveryManagementPage from '~/pages/Delivery';
 
 type TabParamList = {
   Delivery: undefined;
@@ -248,8 +250,8 @@ export default function Home() {
           tabBarContentContainerStyle: { justifyContent: 'center' },
         }}
       >
-        <Tab.Screen name="Delivery" component={() => <ManagementScreen type="Delivery" />} />
-        <Tab.Screen name="Visitors" component={() => <ManagementScreen type="Visitor" />} />
+        <Tab.Screen name="Delivery" component={() => <DeliveryManagementPage />} />
+        <Tab.Screen name="Visitors" component={() => <VisitorManagementPage />} />
         <Tab.Screen name="Issues" component={() => <ManagementScreen type="Issue" />} />
       </Tab.Navigator>
     </SafeAreaView>

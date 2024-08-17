@@ -1,121 +1,135 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, SafeAreaView, Image, Modal, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, SafeAreaView, Image, Modal, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { defaultStyles } from '~/constants/Styles';
-import { router } from 'expo-router';
 import Colors from '~/constants/Colors';
-import { Picker } from '@react-native-picker/picker';
+import { useUserStore } from '~/store/user-storage';
 
-type Visitor = {
+type Delivery = {
     id: string;
     name: string;
-    type: 'individual' | 'group' | 'delivery';
-    eventType?: string;
+    type: 'delivery';
     phoneNumbers: string[];
     otp: string;
     validUntil: Date;
     avatar?: string;
     title?: string;
-    leaveAtDoor?: boolean;  // New property
+    leaveAtDoor: boolean;
+    approved: boolean;
 };
 
 const DeliveryManagementPage: React.FC = () => {
-    const [visitors, setVisitors] = useState<Visitor[]>([]);
-    const [pendingVisitors, setPendingVisitors] = useState<Visitor[]>([
-        { id: '1', name: 'Amazon Delivery', title: 'Amazon Delivery', avatar: 'https://i.pravatar.cc/150?u=1', type: 'delivery', phoneNumbers: ['1234567890'], otp: '123456', validUntil: new Date(), leaveAtDoor: true },
-        { id: '2', name: 'Jumia Delivery', title: 'Jumia Delivery', avatar: 'https://i.pravatar.cc/150?u=2', type: 'individual', phoneNumbers: ['0987654321'], otp: '654321', validUntil: new Date(), leaveAtDoor: false },
-    ]);
-    const [isAddingVisitor, setIsAddingVisitor] = useState(false);
-    const [visitorType, setVisitorType] = useState<'individual' | 'group' | 'delivery'>('individual');
-    const [eventType, setEventType] = useState('');
-    const [phoneNumbers, setPhoneNumbers] = useState('');
-    const [selectedVisitor, setSelectedVisitor] = useState<Visitor | null>(null);
+    const [deliveries, setDeliveries] = useState<Delivery[]>([]);
+    const [pendingDeliveries, setPendingDeliveries] = useState<Delivery[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [selectedDelivery, setSelectedDelivery] = useState<Delivery | null>(null);
     const [showApprovalModal, setShowApprovalModal] = useState(false);
-    const [leaveAtDoor, setLeaveAtDoor] = useState(false);
+    const { user } = useUserStore();
 
-    const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
+    useEffect(() => {
+        fetchDeliveries();
+    }, []);
 
-    const addVisitor = () => {
-        if (phoneNumbers.trim() === '') {
-            Alert.alert('Error', 'Please enter at least one phone number');
-            return;
+    const fetchDeliveries = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await fetch('https://jewapropertypro.com/infinity/api/getalldeliveries', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "resident_id": user?.userid
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            
+            if (data && Array.isArray(data.message)) {
+                const fetchedDeliveries = data.message.map((delivery: any) => ({
+                    id: delivery.id.toString(),
+                    name: delivery.name,
+                    type: 'delivery',
+                    phoneNumbers: [delivery.phone],
+                    otp: delivery.otp,
+                    validUntil: new Date(delivery.validUntil),
+                    avatar: delivery.avatar || `https://i.pravatar.cc/150?u=${delivery.id}`,
+                    title: delivery.title,
+                    leaveAtDoor: delivery.leaveAtDoor,
+                    approved: delivery.approved
+                }));
+                
+                setPendingDeliveries(fetchedDeliveries.filter(d => !d.approved));
+                setDeliveries(fetchedDeliveries.filter(d => d.approved));
+            } else {
+                setPendingDeliveries([]);
+                setDeliveries([]);
+            }
+        } catch (err) {
+            setError('Failed to fetch deliveries. Please try again.');
+            console.error(err);
+        } finally {
+            setLoading(false);
         }
-
-        const newVisitor: Visitor = {
-            id: Date.now().toString(),
-            name: `Visitor ${visitors.length + 1}`,
-            type: visitorType,
-            eventType: visitorType === 'group' ? eventType : undefined,
-            phoneNumbers: phoneNumbers.split(',').map(num => num.trim()),
-            otp: generateOTP(),
-            validUntil: new Date(Date.now() + 24 * 60 * 60 * 1000),
-            avatar: `https://i.pravatar.cc/150?u=${Date.now()}`,
-            leaveAtDoor: visitorType === 'delivery' ? leaveAtDoor : undefined,
-        };
-
-        setVisitors([...visitors, newVisitor]);
-        setIsAddingVisitor(false);
-        setEventType('');
-        setPhoneNumbers('');
-        setLeaveAtDoor(false);
     };
 
-    const approveVisitor = (visitor: Visitor) => {
-        setVisitors([...visitors, visitor]);
-        setPendingVisitors(pendingVisitors.filter(v => v.id !== visitor.id));
+    const approveDelivery = (delivery: Delivery) => {
+        setDeliveries([...deliveries, { ...delivery, approved: true }]);
+        setPendingDeliveries(pendingDeliveries.filter(d => d.id !== delivery.id));
         setShowApprovalModal(false);
     };
 
-    const denyVisitor = (visitorId: string) => {
-        setPendingVisitors(pendingVisitors.filter(v => v.id !== visitorId));
+    const denyDelivery = (deliveryId: string) => {
+        setPendingDeliveries(pendingDeliveries.filter(d => d.id !== deliveryId));
         setShowApprovalModal(false);
     };
 
-    const renderPendingVisitorItem = ({ item }: { item: Visitor }) => (
+    const renderPendingDeliveryItem = ({ item }: { item: Delivery }) => (
         <TouchableOpacity
-            style={styles.pendingVisitorItem}
+            style={styles.pendingDeliveryItem}
             onPress={() => {
-                setSelectedVisitor(item);
+                setSelectedDelivery(item);
                 setShowApprovalModal(true);
             }}
         >
             <Image source={{ uri: item.avatar }} style={styles.pendingAvatar} />
-            <Text style={[styles.pendingName, {
-                fontFamily: 'Nunito_700Bold',
-            }]}>{item.title}</Text>
+            <Text style={styles.pendingName}>{item.title}</Text>
         </TouchableOpacity>
     );
 
-    const renderVisitorItem = ({ item }: { item: Visitor }) => (
-        <TouchableOpacity style={styles.visitorItem} onPress={() => setSelectedVisitor(item)}>
+    const renderDeliveryItem = ({ item }: { item: Delivery }) => (
+        <TouchableOpacity style={styles.deliveryItem} onPress={() => setSelectedDelivery(item)}>
             <Image source={{ uri: item.avatar }} style={styles.avatar} />
-            <View style={styles.visitorInfo}>
-                <Text style={styles.visitorName}>{item.name}</Text>
-                <Text>{item.type === 'group' ? 'Group' : item.type === 'delivery' ? 'Delivery' : 'Individual'}</Text>
+            <View style={styles.deliveryInfo}>
+                <Text style={styles.deliveryName}>{item.name}</Text>
+                <Text>Delivery</Text>
                 <Text>OTP: {item.otp}</Text>
             </View>
         </TouchableOpacity>
     );
 
-    const VisitorTicket = () => (
+    const DeliveryTicket = () => (
         <Modal
-            visible={!!selectedVisitor && !showApprovalModal}
+            visible={!!selectedDelivery && !showApprovalModal}
             transparent
             animationType="slide"
-            onRequestClose={() => setSelectedVisitor(null)}
+            onRequestClose={() => setSelectedDelivery(null)}
         >
             <View style={styles.modalContainer}>
                 <View style={styles.ticketContainer}>
-                    <Image source={{ uri: selectedVisitor?.avatar }} style={styles.ticketAvatar} />
-                    <Text style={styles.ticketName}>{selectedVisitor?.name}</Text>
-                    <Text style={styles.ticketType}>{selectedVisitor?.type === 'group' ? 'Group' : selectedVisitor?.type === 'delivery' ? 'Delivery' : 'Individual'}</Text>
-                    {selectedVisitor?.eventType && <Text style={styles.ticketEvent}>Event: {selectedVisitor.eventType}</Text>}
-                    <Text style={styles.ticketOTP}>OTP: {selectedVisitor?.otp}</Text>
-                    <Text style={styles.ticketValidity}>Valid until: {selectedVisitor?.validUntil.toLocaleString()}</Text>
-                    {selectedVisitor?.type === 'delivery' && (
-                        <Text style={styles.ticketLeaveAtDoor}>Leave at the Gate: {selectedVisitor.leaveAtDoor ? 'Yes' : 'No'}</Text>
-                    )}
-                    <TouchableOpacity style={styles.closeButton} onPress={() => setSelectedVisitor(null)}>
+                    <Image source={{ uri: selectedDelivery?.avatar }} style={styles.ticketAvatar} />
+                    <Text style={styles.ticketName}>{selectedDelivery?.name}</Text>
+                    <Text style={styles.ticketType}>Delivery</Text>
+                    <Text style={styles.ticketOTP}>OTP: {selectedDelivery?.otp}</Text>
+                    <Text style={styles.ticketValidity}>Valid until: {selectedDelivery?.validUntil.toLocaleString()}</Text>
+                    <Text style={styles.ticketLeaveAtDoor}>Leave at the Gate: {selectedDelivery?.leaveAtDoor ? 'Yes' : 'No'}</Text>
+                    <TouchableOpacity style={styles.closeButton} onPress={() => setSelectedDelivery(null)}>
                         <Ionicons name="close-circle" size={24} color={Colors.primary} />
                     </TouchableOpacity>
                 </View>
@@ -132,146 +146,105 @@ const DeliveryManagementPage: React.FC = () => {
         >
             <View style={styles.modalContainer}>
                 <View style={styles.approvalContainer}>
-                    <Text style={[styles.approvalTitle, {
-                        fontFamily: 'Nunito_700Bold',
-                    }
-                    ]}>Approve {selectedVisitor?.title}?</Text>
+                    <Text style={styles.approvalTitle}>Approve {selectedDelivery?.title}?</Text>
                     <View style={styles.approvalButtons}>
-                        <TouchableOpacity style={[styles.approvalButton, styles.approveButton]} onPress={() => approveVisitor(selectedVisitor!)}>
+                        <TouchableOpacity style={[styles.approvalButton, styles.approveButton]} onPress={() => selectedDelivery && approveDelivery(selectedDelivery)}>
                             <Ionicons name="checkmark-circle" size={24} color="white" />
                             <Text style={styles.approvalButtonText}>Approve</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.approvalButton, styles.denyButton]} onPress={() => denyVisitor(selectedVisitor!.id)}>
+                        <TouchableOpacity style={[styles.approvalButton, styles.denyButton]} onPress={() => selectedDelivery && denyDelivery(selectedDelivery.id)}>
                             <Ionicons name="close-circle" size={24} color="white" />
                             <Text style={styles.approvalButtonText}>Deny</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.approvalButton, styles.leaveButton]} onPress={() => approveVisitor(selectedVisitor!)}>
-                            <Ionicons name="home" size={24} color="white" />
-                            <Text style={styles.approvalButtonText}>Leave at Gate</Text>
-                        </TouchableOpacity>
                     </View>
-                    {selectedVisitor?.type === 'delivery' && (
-                        <View style={styles.leaveAtDoorContainer}>
-                            <Text>Leave at the gate: {selectedVisitor.leaveAtDoor ? 'Yes' : 'No'}</Text>
-                        </View>
-                    )}
                 </View>
             </View>
         </Modal>
     );
 
+    if (loading) {
+        return (
+            <SafeAreaView style={[defaultStyles.container, styles.centerContent]}>
+                <ActivityIndicator size="large" color={Colors.primary} />
+                <Text style={styles.loadingText}>Loading deliveries...</Text>
+            </SafeAreaView>
+        );
+    }
+
+    if (error) {
+        return (
+            <SafeAreaView style={[defaultStyles.container, styles.centerContent]}>
+                <Text style={styles.errorText}>Error: {error}</Text>
+                <TouchableOpacity onPress={fetchDeliveries} style={styles.retryButton}>
+                    <Text style={styles.retryButtonText}>Retry</Text>
+                </TouchableOpacity>
+            </SafeAreaView>
+        );
+    }
+
     return (
         <SafeAreaView style={defaultStyles.container}>
-            {/* <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="black" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Delivery Management</Text>
-        <TouchableOpacity onPress={() => setIsAddingVisitor(true)}>
-          <Ionicons name="add-circle-outline" size={24} color="black" />
-        </TouchableOpacity>
-      </View> */}
-
-            <View style={styles.pendingVisitorsContainer}>
-                <Text style={{
-                    fontFamily: 'Nunito_700Bold',
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    marginBottom: 8,
-                }}>Pending Approval</Text>
-                <FlatList
-                    data={pendingVisitors}
-                    renderItem={renderPendingVisitorItem}
-                    keyExtractor={item => item.id}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                />
+            <View style={styles.pendingDeliveriesContainer}>
+                <Text style={styles.sectionTitle}>Pending Approval</Text>
+                {pendingDeliveries.length > 0 ? (
+                    <FlatList
+                        data={pendingDeliveries}
+                        renderItem={renderPendingDeliveryItem}
+                        keyExtractor={item => item.id}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                    />
+                ) : (
+                    <Text style={styles.noDeliveriesText}>No pending deliveries</Text>
+                )}
             </View>
 
-            <View style={styles.approvedVisitorsContainer}>
-                <Text style={{
-                    fontFamily: 'Nunito_700Bold',
-                    fontSize: 16,
-                    fontWeight: 'bold',
-                    marginBottom: 8,
-                }}>Approved Visitors</Text>
-                <FlatList
-                    data={visitors}
-                    renderItem={renderVisitorItem}
-                    keyExtractor={item => item.id}
-                />
+            <View style={styles.approvedDeliveriesContainer}>
+                <Text style={styles.sectionTitle}>Approved Deliveries</Text>
+                {deliveries.length > 0 ? (
+                    <FlatList
+                        data={deliveries}
+                        renderItem={renderDeliveryItem}
+                        keyExtractor={item => item.id}
+                    />
+                ) : (
+                    <Text style={styles.noDeliveriesText}>No approved deliveries</Text>
+                )}
             </View>
 
-            <VisitorTicket />
+            <DeliveryTicket />
             <ApprovalModal />
-
-            <Modal visible={isAddingVisitor} transparent animationType="slide" onRequestClose={() => setIsAddingVisitor(false)}>
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Add Delivery</Text>
-                        <Picker selectedValue={visitorType} onValueChange={setVisitorType} style={styles.picker}>
-                            <Picker.Item label="Individual" value="individual" />
-                            <Picker.Item label="Group" value="group" />
-                            <Picker.Item label="Delivery" value="delivery" />
-                        </Picker>
-                        {visitorType === 'group' && (
-                            <TextInput
-                                placeholder="Event Type"
-                                value={eventType}
-                                onChangeText={setEventType}
-                                style={styles.input}
-                            />
-                        )}
-                        <TextInput
-                            placeholder="Phone Numbers (comma separated)"
-                            value={phoneNumbers}
-                            onChangeText={setPhoneNumbers}
-                            style={styles.input}
-                            keyboardType="numeric"
-                        />
-                        {visitorType === 'delivery' && (
-                            <View style={styles.checkboxContainer}>
-                                <Text style={styles.checkboxLabel}>Leave at the door?</Text>
-                                <TouchableOpacity onPress={() => setLeaveAtDoor(!leaveAtDoor)} style={styles.checkbox}>
-                                    <Ionicons name={leaveAtDoor ? "checkbox-outline" : "square-outline"} size={24} color="black" />
-                                </TouchableOpacity>
-                            </View>
-                        )}
-                        <TouchableOpacity onPress={addVisitor} style={styles.addButton}>
-                            <Text style={styles.addButtonText}>Add Visitor</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal>
         </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
-    header: {
-        flexDirection: 'row',
+    centerContent: {
+        justifyContent: 'center',
         alignItems: 'center',
-        justifyContent: 'space-between',
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+    },
+    errorText: {
+        fontSize: 16,
+        color: 'red',
+        marginBottom: 10,
+    },
+    pendingDeliveriesContainer: {
         padding: 16,
-        backgroundColor: 'white',
-        elevation: 2,
     },
-    title: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        fontFamily: 'Nunito_700Bold',
-    },
-    pendingVisitorsContainer: {
-        padding: 16,
-    },
-    sectionTitle: {
-
-    },
-    approvedVisitorsContainer: {
+    approvedDeliveriesContainer: {
         flex: 1,
         padding: 16,
     },
-    pendingVisitorItem: {
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    pendingDeliveryItem: {
         marginRight: 16,
         alignItems: 'center',
     },
@@ -284,9 +257,8 @@ const styles = StyleSheet.create({
         marginTop: 8,
         fontSize: 14,
         textAlign: 'center',
-
     },
-    visitorItem: {
+    deliveryItem: {
         flexDirection: 'row',
         alignItems: 'center',
         padding: 16,
@@ -299,10 +271,10 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         marginRight: 16,
     },
-    visitorInfo: {
+    deliveryInfo: {
         flex: 1,
     },
-    visitorName: {
+    deliveryName: {
         fontSize: 16,
         fontWeight: 'bold',
     },
@@ -311,39 +283,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContent: {
-        width: '80%',
-        backgroundColor: 'white',
-        borderRadius: 8,
-        padding: 16,
-    },
-    modalTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 16,
-    },
-    picker: {
-        width: '100%',
-        marginBottom: 16,
-    },
-    input: {
-        width: '100%',
-        padding: 8,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 4,
-        marginBottom: 16,
-    },
-    addButton: {
-        backgroundColor: Colors.primary,
-        padding: 12,
-        borderRadius: 4,
-        alignItems: 'center',
-    },
-    addButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
     },
     ticketContainer: {
         backgroundColor: 'white',
@@ -364,10 +303,6 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     ticketType: {
-        fontSize: 16,
-        marginBottom: 10,
-    },
-    ticketEvent: {
         fontSize: 16,
         marginBottom: 10,
     },
@@ -417,26 +352,26 @@ const styles = StyleSheet.create({
     denyButton: {
         backgroundColor: 'red',
     },
-    leaveButton: {
-        backgroundColor: '#B0E0E6',
-    },
     approvalButtonText: {
         color: 'white',
         fontWeight: 'bold',
     },
-    leaveAtDoorContainer: {
+    noDeliveriesText: {
+        fontStyle: 'italic',
+        color: '#888',
+        textAlign: 'center',
         marginTop: 20,
     },
-    checkboxContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 16,
+    retryButton: {
+        backgroundColor: Colors.primary,
+        padding: 10,
+        borderRadius: 5,
+        marginTop: 20,
     },
-    checkboxLabel: {
-        marginRight: 8,
-    },
-    checkbox: {
-        padding: 8,
+    retryButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
 });
 

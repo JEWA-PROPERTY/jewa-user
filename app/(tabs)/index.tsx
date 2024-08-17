@@ -12,7 +12,7 @@ export default function HomeTab() {
   const pendingDeliveries = 3;
   const activeVisitorPasses = 5;
   const domesticHelpCount = 2;
-  const residentName = 'John Doe';
+  const residentName = user?.email || 'Resident';
   const houseNumber = 'F-62';
   return (
     <SafeAreaView style={styles.container}>
