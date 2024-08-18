@@ -2,17 +2,87 @@ import {
     KeyboardAvoidingView,
     Platform,
     View,
-    JewaText,
-    JewaTextInput,
+    Text,
+    TextInput,
     StyleSheet,
     TouchableOpacity,
     ActivityIndicator,
-    Alert
+    Alert,
+    ScrollView
 } from "react-native";
 import { useState } from "react";
 import { defaultStyles } from "~/constants/Styles";
 import Colors from "~/constants/Colors";
-import { Redirect, router } from "expo-router";
+import { router } from "expo-router";
+
+function OTPVerification({ email, onVerificationSuccess }) {
+    const [otp, setOtp] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    async function verifyOTP() {
+        if (otp.length !== 5) {
+            Alert.alert("Error", "Please enter a 5-character OTP");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const response = await fetch('https://jewapropertypro.com/infinity/api/emailcodeconfirmation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, otp })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                Alert.alert("Success", "OTP verified successfully");
+                onVerificationSuccess();
+            } else {
+                Alert.alert("Error", data.message || "OTP verification failed");
+            }
+        } catch (error) {
+            console.error("OTP verification error:", error);
+            Alert.alert("Error", "An error occurred during OTP verification");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    return (
+        <View style={styles.otpContainer}>
+            <Text style={defaultStyles.header}>Verify Email</Text>
+            <Text style={defaultStyles.descriptionJewaText}>
+                Once you've been verified by management, you'll receive an OTP via email.
+            </Text>
+            <View style={styles.inputContainer}>
+                <TextInput
+                    style={[styles.input, { flex: 1 }]}
+                    placeholder="Enter 5-character OTP"
+                    placeholderTextColor={Colors.gray}
+                    keyboardType="email-address"
+                    maxLength={5}
+                    value={otp}
+                    onChangeText={setOtp}
+                />
+            </View>
+            <TouchableOpacity
+                style={[
+                    defaultStyles.pillButton,
+                    otp.length === 5 ? styles.enabled : styles.disabled,
+                ]}
+                onPress={verifyOTP}
+                disabled={loading}>
+                {loading ? <ActivityIndicator size="small" color={'white'} /> :
+                    <Text style={defaultStyles.buttonJewaText}>Verify OTP</Text>
+                }
+            </TouchableOpacity>
+        </View>
+    );
+}
 
 export default function Register() {
     const [loading, setLoading] = useState(false);
@@ -20,6 +90,9 @@ export default function Register() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [phone, setPhone] = useState('');
+    const [fname, setFName] = useState('');
+    const [lname, setLName] = useState('');
+    const [showOTPVerification, setShowOTPVerification] = useState(false);
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 80 : 0;
 
     async function onRegisterPress() {
@@ -33,8 +106,10 @@ export default function Register() {
         const payload = {
             email: email,
             phone: phone,
-            usertype: "Resident",
-            password: password
+            usertype_id: 1,
+            password: password,
+            fname: fname,
+            lname: lname
         };
 
         try {
@@ -49,11 +124,9 @@ export default function Register() {
             const data = await response.json();
 
             if (response.ok) {
-                // Registration successful
-                Alert.alert("Success", "Registration successful");
-                router.push('/(tabs)');
+                Alert.alert("Success", "Registration successful. Please wait for approval");
+                setShowOTPVerification(true);
             } else {
-                // Registration failed
                 Alert.alert("Error", data.message || "Registration failed");
             }
         } catch (error) {
@@ -64,18 +137,32 @@ export default function Register() {
         }
     }
 
+    function handleVerificationSuccess() {
+        Alert.alert(
+            "Verification Successful",
+            "Your account has been verified. Please log in.",
+            [
+                { text: "OK", onPress: () => router.push('/login') }
+            ]
+        );
+    }
+
+    if (showOTPVerification) {
+        return <OTPVerification email={email} onVerificationSuccess={handleVerificationSuccess} />;
+    }
+
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
             behavior="padding"
             keyboardVerticalOffset={keyboardVerticalOffset}>
-            <View style={defaultStyles.container} className="mt-9">
-                <JewaText style={defaultStyles.header}>Create an Account</JewaText>
-                <JewaText style={defaultStyles.descriptionJewaText}>
+            <ScrollView style={defaultStyles.container} className="mt-9">
+                <Text style={defaultStyles.header}>Create an Account</Text>
+                <Text style={defaultStyles.descriptionJewaText}>
                     Enter your email, phone, and password to register
-                </JewaText>
+                </Text>
                 <View style={styles.inputContainer}>
-                    <JewaTextInput
+                    <TextInput
                         style={[styles.input, { flex: 1 }]}
                         placeholder="Email"
                         placeholderTextColor={Colors.gray}
@@ -85,7 +172,28 @@ export default function Register() {
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    <JewaTextInput
+                    <TextInput
+                        style={[styles.input, { flex: 1 }]}
+                        placeholder="First Name"
+                        placeholderTextColor={Colors.gray}
+                        keyboardType="email-address"
+                        value={fname}
+                        onChangeText={setFName}
+                    />
+                </View>
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={[styles.input, { flex: 1 }]}
+                        placeholder="Last Name"
+                        placeholderTextColor={Colors.gray}
+                        keyboardType="email-address"
+                        value={lname}
+                        onChangeText={setLName}
+                    />
+                </View>
+         
+                <View style={styles.inputContainer}>
+                    <TextInput
                         style={[styles.input, { flex: 1 }]}
                         placeholder="Phone"
                         placeholderTextColor={Colors.gray}
@@ -95,7 +203,7 @@ export default function Register() {
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    <JewaTextInput
+                    <TextInput
                         style={[styles.input, { flex: 1 }]}
                         placeholder="Password"
                         placeholderTextColor={Colors.gray}
@@ -105,7 +213,7 @@ export default function Register() {
                     />
                 </View>
                 <View style={styles.inputContainer}>
-                    <JewaTextInput
+                    <TextInput
                         style={[styles.input, { flex: 1 }]}
                         placeholder="Confirm Password"
                         placeholderTextColor={Colors.gray}
@@ -123,10 +231,10 @@ export default function Register() {
                     onPress={onRegisterPress}
                     disabled={loading || email === '' || phone === '' || password === '' || confirmPassword === ''}>
                     {loading ? <ActivityIndicator size="small" color={'white'} /> :
-                        <JewaText style={defaultStyles.buttonJewaText}>Register</JewaText>
+                        <Text style={defaultStyles.buttonJewaText}>Register</Text>
                     }
                 </TouchableOpacity>
-            </View>
+            </ScrollView>
         </KeyboardAvoidingView>
     )
 }
@@ -148,5 +256,11 @@ const styles = StyleSheet.create({
     },
     disabled: {
         backgroundColor: Colors.gray,
+    },
+    otpContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
     },
 });

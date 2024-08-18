@@ -27,7 +27,7 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
     const [responding, setResponding] = useState<boolean>(false)
-    const {user} = useUserStore();
+    const { user } = useUserStore();
 
     const fetchNotifications = async () => {
         const response = await axios.post('https://jewapropertypro.com/infinity/api/allnotifications', {
@@ -39,23 +39,27 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
     };
 
     async function respondToNotification(id: number, response_id: number) {
+
+        const payload = {
+            "notif_id": id,
+            "response": response_id
+        }
+
+        console.log("Payload:::", payload)
+
         try {
             setResponding(true);
-            const response = await axios.post('https://jewapropertypro.com/infinity/api/updatevisitorrequest', {
-                "notif_id": id,
-                "status": response_id
-            });
-            console.log(response)
+            const response = await axios.post('https://jewapropertypro.com/infinity/api/updatedeliveryrequest', payload);
             setResponding(false);
             fetchNotifications()
         } catch (error) {
             setResponding(false)
             console.error('Error responding to notification:', error);
         } finally {
-               setModalVisible(false);
+            setModalVisible(false);
         }
     }
-    
+
     useEffect(() => {
         loadNotifications();
     }, []);
@@ -64,15 +68,15 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
         setIsLoading(true);
         try {
             const fetchedNotifications = await fetchNotifications();
-            const sortedNotifications = fetchedNotifications.sort((a, b) => 
-                new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            const sortedNotifications = fetchedNotifications.sort((a, b) =>
+                new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
             );
             setNotifications(sortedNotifications);
         } catch (error) {
             // console.error('Error fetching notifications:', error);
         } finally {
             setIsLoading(false);
-            
+
         }
     };
 
@@ -95,19 +99,19 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
     };
 
     const handleApprove = async () => {
-        await respondToNotification(selectedNotification?.id!, 2 )
+        await respondToNotification(selectedNotification?.id!, 2)
         handleModalClose();
     };
 
     const handleDeny = async () => {
         // Handle deny logic
-        await respondToNotification(selectedNotification?.id!, 3 )
+        await respondToNotification(selectedNotification?.id!, 3)
         handleModalClose();
     };
 
-    const handleLeaveAtGate = async() => {
+    const handleLeaveAtGate = async () => {
         // Handle leave at gate logic
-        await respondToNotification(selectedNotification?.id!, 1 )
+        await respondToNotification(selectedNotification?.id!, 1)
         handleModalClose();
     };
 
@@ -153,7 +157,7 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
             visible={modalVisible}
             onRequestClose={handleModalClose}
         >
-            <View style={styles.modalContainer}>
+            {selectedNotification?.notification_status !== 'Responded' ? <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
                     <JewaText style={styles.modalTitle}>Notification Details</JewaText>
                     <JewaText style={styles.modalMessage}>{selectedNotification?.notification_message}</JewaText>
@@ -181,7 +185,21 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
                         <Ionicons name="close" size={24} color="#000" />
                     </TouchableOpacity>
                 </View>
-            </View>
+            </View> :
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <JewaText>You have already responded</JewaText>
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity style={[styles.button, styles.approveButton]} onPress={() =>
+                                setModalVisible(false)
+                            }>
+                                <Ionicons name="checkmark-circle-outline" size={20} color="#fff" />
+                                <JewaText style={styles.buttonText}>Close</JewaText>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            }
         </Modal>
     );
 
@@ -338,19 +356,19 @@ const styles = StyleSheet.create({
     approveButton: {
         backgroundColor: '#2ecc71', // Green
         display: "flex",
-        justifyContent: "space-evenly", 
+        justifyContent: "space-evenly",
         paddingHorizontal: 15
     },
     denyButton: {
         backgroundColor: '#e74c3c', // Red
         display: "flex",
-        justifyContent: "space-evenly", 
+        justifyContent: "space-evenly",
         paddingHorizontal: 15
     },
     leaveAtGateButton: {
         backgroundColor: '#3498db', // Blue
         display: "flex",
-        justifyContent: "space-evenly", 
+        justifyContent: "space-evenly",
         paddingHorizontal: 15
 
     },

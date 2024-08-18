@@ -1,22 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, FlatList, SafeAreaView, Image, Modal, ActivityIndicator } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { defaultStyles } from '~/constants/Styles';
 import Colors from '~/constants/Colors';
 import { useUserStore } from '~/store/user-storage';
 import JewaText from '~/components/JewaText';
 
 type Delivery = {
-    id: string;
-    name: string;
-    type: 'delivery';
-    phoneNumbers: string[];
+    id: number;
+    destination: string | null;
+    type_of_delivery: string | null;
+    resident_id: number;
+    delivery_status: "1" | "2" | "3";
+    mode_of_delivery: string | null;
+    created_at: string;
+    updated_at: string | null;
+    time_in: string | null;
+    time_out: string | null;
+    vehicle_number: string | null;
+    delivery_name: string | null;
+    delivery_phone: string | null;
+    delivery_verification_number: string | null;
+    house_id: number;
     otp: string;
-    validUntil: Date;
-    avatar?: string;
-    title?: string;
-    leaveAtDoor: boolean;
-    approved: boolean;
+    notif_id: number;
+    leaveatgate_status: string;
 };
 
 const DeliveryManagementPage: React.FC = () => {
@@ -42,7 +50,7 @@ const DeliveryManagementPage: React.FC = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    "resident_id": user?.userid
+                    "resident_id": user?.userid,
                 }),
             });
 
@@ -51,23 +59,12 @@ const DeliveryManagementPage: React.FC = () => {
             }
 
             const data = await response.json();
-            
+
             if (data && Array.isArray(data.message)) {
-                const fetchedDeliveries = data.message.map((delivery: any) => ({
-                    id: delivery.id.toString(),
-                    name: delivery.name,
-                    type: 'delivery',
-                    phoneNumbers: [delivery.phone],
-                    otp: delivery.otp,
-                    validUntil: new Date(delivery.validUntil),
-                    avatar: delivery.avatar || `https://i.pravatar.cc/150?u=${delivery.id}`,
-                    title: delivery.title,
-                    leaveAtDoor: delivery.leaveAtDoor,
-                    approved: delivery.approved
-                }));
-                
-                setPendingDeliveries(fetchedDeliveries.filter(d => !d.approved));
-                setDeliveries(fetchedDeliveries.filter(d => d.approved));
+                const fetchedDeliveries: Delivery[] = data.message;
+                console.log("Deliveries::", fetchedDeliveries)
+                setPendingDeliveries(fetchedDeliveries.filter(d => d.leaveatgate_status === 'Pending'));
+                setDeliveries(fetchedDeliveries.filter(d => d.delivery_status === "2"));
             } else {
                 setPendingDeliveries([]);
                 setDeliveries([]);
@@ -81,12 +78,12 @@ const DeliveryManagementPage: React.FC = () => {
     };
 
     const approveDelivery = (delivery: Delivery) => {
-        setDeliveries([...deliveries, { ...delivery, approved: true }]);
+        setDeliveries([...deliveries, { ...delivery, delivery_status: '2' }]);
         setPendingDeliveries(pendingDeliveries.filter(d => d.id !== delivery.id));
         setShowApprovalModal(false);
     };
 
-    const denyDelivery = (deliveryId: string) => {
+    const denyDelivery = (deliveryId: number) => {
         setPendingDeliveries(pendingDeliveries.filter(d => d.id !== deliveryId));
         setShowApprovalModal(false);
     };
@@ -99,19 +96,32 @@ const DeliveryManagementPage: React.FC = () => {
                 setShowApprovalModal(true);
             }}
         >
-            <Image source={{ uri: item.avatar }} style={styles.pendingAvatar} />
-            <JewaText style={styles.pendingName}>{item.title}</JewaText>
+            <View style={styles.pendingIconContainer}>
+                <MaterialCommunityIcons name="package-variant-closed" size={24} color={Colors.primary} />
+            </View>
+            <JewaText style={styles.pendingName}>{item.type_of_delivery || 'Unknown Delivery'}</JewaText>
         </TouchableOpacity>
     );
 
     const renderDeliveryItem = ({ item }: { item: Delivery }) => (
         <TouchableOpacity style={styles.deliveryItem} onPress={() => setSelectedDelivery(item)}>
-            <Image source={{ uri: item.avatar }} style={styles.avatar} />
-            <View style={styles.deliveryInfo}>
-                <JewaText style={styles.deliveryName}>{item.name}</JewaText>
-                <JewaText>Delivery</JewaText>
-                <JewaText>OTP: {item.otp}</JewaText>
+            <View style={styles.deliveryIconContainer}>
+                <MaterialCommunityIcons name="package-variant" size={24} color={Colors.primary} />
             </View>
+            <View style={styles.deliveryInfo}>
+                <JewaText style={styles.deliveryName}>{item.type_of_delivery || 'Unknown Delivery'}</JewaText>
+                <JewaText style={styles.deliveryDetails}>
+                    <Ionicons name="time-outline" size={16} color={Colors.gray} /> {new Date(item.created_at).toLocaleDateString()}
+                </JewaText>
+                {item.delivery_name && (
+                    <JewaText style={styles.deliveryDetails}>
+                        <Ionicons name="person-outline" size={16} color={Colors.gray} /> {item.delivery_name}
+                    </JewaText>
+                )}
+            </View>
+            <TouchableOpacity style={styles.moreInfoButton}>
+                <Ionicons name="chevron-forward" size={24} color={Colors.primary} />
+            </TouchableOpacity>
         </TouchableOpacity>
     );
 
@@ -124,12 +134,30 @@ const DeliveryManagementPage: React.FC = () => {
         >
             <View style={styles.modalContainer}>
                 <View style={styles.ticketContainer}>
-                    <Image source={{ uri: selectedDelivery?.avatar }} style={styles.ticketAvatar} />
-                    <JewaText style={styles.ticketName}>{selectedDelivery?.name}</JewaText>
-                    <JewaText style={styles.ticketType}>Delivery</JewaText>
-                    <JewaText style={styles.ticketOTP}>OTP: {selectedDelivery?.otp}</JewaText>
-                    <JewaText style={styles.ticketValidity}>Valid until: {selectedDelivery?.validUntil.toLocaleString()}</JewaText>
-                    <JewaText style={styles.ticketLeaveAtDoor}>Leave at the Gate: {selectedDelivery?.leaveAtDoor ? 'Yes' : 'No'}</JewaText>
+                    <View style={styles.ticketRow}>
+                        <MaterialCommunityIcons name="package-variant" size={24} color={Colors.primary} />
+                        <JewaText style={styles.ticketTitle}>{selectedDelivery?.type_of_delivery || 'Unknown Delivery'}</JewaText>
+                    </View>
+                    <View style={styles.ticketRow}>
+                        <Ionicons name="time-outline" size={24} color={Colors.gray} />
+                        <JewaText style={styles.ticketDetail}> {new Date(selectedDelivery?.created_at || '').toLocaleString()}</JewaText>
+                    </View>
+                    <View style={styles.ticketRow}>
+                        <Ionicons name="checkmark-circle-outline" size={24} color={Colors.gray} />
+                        <JewaText style={styles.ticketDetail}>{selectedDelivery?.delivery_status === '2' ? 'Approved' : 'Pending'}</JewaText>
+                    </View>
+                    <View style={styles.ticketRow}>
+                        <Ionicons name="key-outline" size={24} color={Colors.gray} />
+                        <JewaText style={styles.ticketDetail}> {selectedDelivery?.otp || 'N/A'}</JewaText>
+                    </View>
+                    <View style={styles.ticketRow}>
+                        <Ionicons name="call-outline" size={24} color={Colors.gray} />
+                        <JewaText style={styles.ticketDetail}> {selectedDelivery?.delivery_phone}</JewaText>
+                    </View>
+                    <View style={styles.ticketRow}>
+                        <Ionicons name="home-outline" size={24} color={Colors.gray} />
+                        <JewaText style={styles.ticketDetail}> {selectedDelivery?.leaveatgate_status ? 'Yes' : 'No'}</JewaText>
+                    </View>
                     <TouchableOpacity style={styles.closeButton} onPress={() => setSelectedDelivery(null)}>
                         <Ionicons name="close-circle" size={24} color={Colors.primary} />
                     </TouchableOpacity>
@@ -147,15 +175,15 @@ const DeliveryManagementPage: React.FC = () => {
         >
             <View style={styles.modalContainer}>
                 <View style={styles.approvalContainer}>
-                    <JewaText style={styles.approvalTitle}>Approve {selectedDelivery?.title}?</JewaText>
+                    <JewaText style={styles.approvalTitle}>Approve {selectedDelivery?.type_of_delivery || 'Delivery'}?</JewaText>
                     <View style={styles.approvalButtons}>
                         <TouchableOpacity style={[styles.approvalButton, styles.approveButton]} onPress={() => selectedDelivery && approveDelivery(selectedDelivery)}>
                             <Ionicons name="checkmark-circle" size={24} color="white" />
-                            <JewaText style={styles.approvalButtonJewaText}>Approve</JewaText>
+                            <JewaText style={styles.approvalButtonText}>Approve</JewaText>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.approvalButton, styles.denyButton]} onPress={() => selectedDelivery && denyDelivery(selectedDelivery.id)}>
                             <Ionicons name="close-circle" size={24} color="white" />
-                            <JewaText style={styles.approvalButtonJewaText}>Deny</JewaText>
+                            <JewaText style={styles.approvalButtonText}>Deny</JewaText>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -167,7 +195,7 @@ const DeliveryManagementPage: React.FC = () => {
         return (
             <SafeAreaView style={[defaultStyles.container, styles.centerContent]}>
                 <ActivityIndicator size="large" color={Colors.primary} />
-                <JewaText style={styles.loadingJewaText}>Loading deliveries...</JewaText>
+                <JewaText style={styles.loadingText}>Loading deliveries...</JewaText>
             </SafeAreaView>
         );
     }
@@ -175,9 +203,9 @@ const DeliveryManagementPage: React.FC = () => {
     if (error) {
         return (
             <SafeAreaView style={[defaultStyles.container, styles.centerContent]}>
-                <JewaText style={styles.errorJewaText}>Error: {error}</JewaText>
+                <JewaText style={styles.errorText}>Error: {error}</JewaText>
                 <TouchableOpacity onPress={fetchDeliveries} style={styles.retryButton}>
-                    <JewaText style={styles.retryButtonJewaText}>Retry</JewaText>
+                    <JewaText style={styles.retryButtonText}>Retry</JewaText>
                 </TouchableOpacity>
             </SafeAreaView>
         );
@@ -186,30 +214,30 @@ const DeliveryManagementPage: React.FC = () => {
     return (
         <SafeAreaView style={defaultStyles.container}>
             <View style={styles.pendingDeliveriesContainer}>
-                <JewaText style={styles.sectionTitle}>Pending Approval</JewaText>
+                <JewaText style={styles.sectionTitle}>Pending pick up at the gate</JewaText>
                 {pendingDeliveries.length > 0 ? (
                     <FlatList
                         data={pendingDeliveries}
                         renderItem={renderPendingDeliveryItem}
-                        keyExtractor={item => item.id}
+                        keyExtractor={item => item.id.toString()}
                         horizontal
                         showsHorizontalScrollIndicator={false}
                     />
                 ) : (
-                    <JewaText style={styles.noDeliveriesJewaText}>No pending deliveries</JewaText>
+                    <JewaText style={styles.noDeliveriesText}>No pending deliveries</JewaText>
                 )}
             </View>
 
             <View style={styles.approvedDeliveriesContainer}>
-                <JewaText style={styles.sectionTitle}>Approved Deliveries</JewaText>
+                <JewaText style={styles.sectionTitle}>Allowed deliveries</JewaText>
                 {deliveries.length > 0 ? (
                     <FlatList
                         data={deliveries}
                         renderItem={renderDeliveryItem}
-                        keyExtractor={item => item.id}
+                        keyExtractor={item => item.id.toString()}
                     />
                 ) : (
-                    <JewaText style={styles.noDeliveriesJewaText}>No approved deliveries</JewaText>
+                    <JewaText style={styles.noDeliveriesText}>No approved deliveries</JewaText>
                 )}
             </View>
 
@@ -324,6 +352,11 @@ const styles = StyleSheet.create({
         top: 10,
         right: 10,
     },
+    ticketRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 4,
+    },
     approvalContainer: {
         backgroundColor: 'white',
         padding: 20,
@@ -373,6 +406,64 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',
+    },
+    retryButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    sectionTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 16,
+        color: Colors.primary,
+    },
+
+    pendingIconContainer: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: Colors.lightGray,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+    deliveryIconContainer: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: Colors.lightGray,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 16,
+    },
+    deliveryDetails: {
+        fontSize: 14,
+        color: Colors.gray,
+        marginBottom: 2,
+    },
+    moreInfoButton: {
+        padding: 8,
+    },
+    ticketTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    ticketDetail: {
+        fontSize: 16,
+        marginBottom: 5,
+    },
+    approvalButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        marginLeft: 5,
+    },
+    noDeliveriesText: {
+        fontStyle: 'italic',
+        color: '#888',
+        textAlign: 'center',
+        marginTop: 20,
     },
 });
 
