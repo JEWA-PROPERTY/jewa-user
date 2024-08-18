@@ -36,6 +36,7 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
         console.log(response.data);
         const data = response.data;
         setNotifications(data.message);
+        return data.message;
     };
 
     async function respondToNotification(id: number, response_id: number) {
@@ -45,11 +46,11 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
             "response": response_id
         }
 
-        console.log("Payload:::", payload)
+        console.log("Notifications Payload:::", payload)
 
         try {
             setResponding(true);
-            const response = await axios.post('https://jewapropertypro.com/infinity/api/updatedeliveryrequest', payload);
+            // const response = await axios.post('https://jewapropertypro.com/infinity/api/updatedeliveryrequest', payload);
             setResponding(false);
             fetchNotifications()
         } catch (error) {
@@ -69,14 +70,13 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
         try {
             const fetchedNotifications = await fetchNotifications();
             const sortedNotifications = fetchedNotifications.sort((a, b) =>
-                new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+                new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
             );
             setNotifications(sortedNotifications);
         } catch (error) {
-            // console.error('Error fetching notifications:', error);
+            console.error('Error fetching notifications:', error);
         } finally {
             setIsLoading(false);
-
         }
     };
 
