@@ -50,7 +50,8 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
 
         try {
             setResponding(true);
-            // const response = await axios.post('https://jewapropertypro.com/infinity/api/updatedeliveryrequest', payload);
+            const response = await axios.post('https://jewapropertypro.com/infinity/api/updatedeliveryrequest', payload);
+            console.log("Real Response:::",response.data);
             setResponding(false);
             fetchNotifications()
         } catch (error) {

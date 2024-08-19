@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList, SafeAreaView, Image, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, FlatList, SafeAreaView, Image, ActivityIndicator, Platform, Linking, Alert, TouchableOpacity } from 'react-native';
 import { defaultStyles } from '~/constants/Styles';
 import Colors from '~/constants/Colors';
 import { useUserStore } from '~/store/user-storage';
 import JewaText from '~/components/JewaText';
+import { Feather, Ionicons } from '@expo/vector-icons';
 
 type Visitor = {
   id: number;
@@ -37,6 +38,16 @@ const VisitorManagementPage: React.FC = () => {
     fetchVisitors();
   }, []);
 
+  const callMobilePhone = async (phoneNumber: string) => {
+    const url = Platform.OS === 'ios' ? `telprompt:${phoneNumber}` : `tel:${phoneNumber}`;
+    try {
+      await Linking.openURL(url);
+    } catch (error) {
+      console.error('Error opening phone app:', error);
+      Alert.alert('Error', 'Unable to open phone app');
+    }
+  };
+  
   const fetchVisitors = async () => {
     if (!user || !user.userid) {
       setError('User ID not found');
@@ -74,18 +85,21 @@ const VisitorManagementPage: React.FC = () => {
 
   const renderVisitorItem = ({ item }: { item: Visitor }) => (
     <View style={styles.visitorItem}>
-      <Image
-        source={{ uri: item.image_url || 'https://i.pravatar.cc/150?u=1' }}
-        style={styles.avatar}
-      />
+      <View style={[styles.iconCircle, { backgroundColor: Colors.primary }]}>
+        <Ionicons name={'person-outline'} size={24} color="#fff" />
+      </View>
       <View style={styles.visitorInfo}>
         <JewaText style={styles.visitorName}>{item.name}</JewaText>
-        <JewaText>Phone: {item.phone}</JewaText>
-        <JewaText>OTP: {item.otp}</JewaText>
+        {item.otp && <JewaText>OTP: {item.otp}</JewaText>}
         <JewaText>Status: {item.prebooked_status}</JewaText>
+        <JewaText>Time In: {item.time_in}</JewaText>
+        <JewaText>Time Out: {item.time_out}</JewaText>
         {item.event_type && <JewaText>Event: {item.event_type}</JewaText>}
         {item.vehicle_number && <JewaText>Vehicle: {item.vehicle_number}</JewaText>}
       </View>
+      <TouchableOpacity onPress={() => callMobilePhone(item.phone)}>
+          <Feather name="phone-call" size={24} color={Colors.primary} />
+        </TouchableOpacity>
     </View>
   );
 
@@ -109,15 +123,13 @@ const VisitorManagementPage: React.FC = () => {
     <SafeAreaView style={defaultStyles.container}>
       <View style={styles.headerTop}>
         <JewaText style={styles.sectionTitle}>Visitors</JewaText>
-        {/* <TouchableOpacity style={styles.addButton} onPress={() => console.log("Hello")}>
-          <Ionicons name="add-circle-outline" size={32} color="white" />
-        </TouchableOpacity> */}
       </View>
       <FlatList
         data={visitors}
         renderItem={renderVisitorItem}
         keyExtractor={item => item.id.toString()}
         ListEmptyComponent={<JewaText style={styles.emptyJewaText}>No visitors found.</JewaText>}
+        style={{ marginBottom: 300 }}
       />
     </SafeAreaView>
   );
@@ -192,6 +204,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  iconCircle: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  }
 });
 
 export default VisitorManagementPage;
