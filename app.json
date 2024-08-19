@@ -16,12 +16,6 @@
         {
           "launchMode": "most-recent"
         }
-      ],
-      [
-        "expo-font",
-        {
-          "fonts": ["node_modules/@expo-google-fonts/nunito/*"]
-        }
       ]
     ],
     "experiments": {

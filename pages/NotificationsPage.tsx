@@ -216,7 +216,12 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
                 <ActivityIndicator size="large" color="#3498db" style={styles.activityIndicator} />
             ) : (
                 <FlatList
-                    data={notifications}
+                    ListEmptyComponent={() => (
+                        <View style={styles.activityIndicator}>
+                            <JewaText>No notifications available</JewaText>
+                        </View>
+                    )}
+                    data={[]}
                     renderItem={renderNotificationItem}
                     keyExtractor={(item) => item.id.toString()}
                     contentContainerStyle={styles.listContainer}

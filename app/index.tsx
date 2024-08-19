@@ -58,7 +58,7 @@ export default function Home() {
                     }} />
                 </View>
                 <JewaText style={[{
-                    fontFamily: 'Nunito_900Bold',
+                    fontFamily: 'Nunito_700Bold',
                     fontSize: 40,
                     JewaTextTransform: 'uppercase',
                     justifyContent: 'center',

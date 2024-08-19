@@ -6,11 +6,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { Link } from 'expo-router';
 import JewaText from './JewaText';
+import { useUserStore } from '~/store/user-storage';
 
 const CustomHeader = () => {
     const { top } = useSafeAreaInsets();
+    const {user} = useUserStore();
 
-    const initials = 'DK';
+    const initials = user?.fullname.split(' ').map((n) => n[0]).join('') || 'U';
     return (
         <BlurView intensity={80} tint={'extraLight'} style={{ paddingTop: top }}>
             <View
@@ -39,7 +41,7 @@ const CustomHeader = () => {
                     </TouchableOpacity>
                 </Link>
 
-                <JewaText style={{ color: Colors.dark, fontSize: 20, fontFamily: 'Nunito_700Bold' }}>Hse F-62</JewaText>
+                <JewaText style={{ color: Colors.dark, fontSize: 20, fontFamily: 'Nunito_700Bold' }}></JewaText>
 
                 <Link href={'/notifications'} asChild>
                     <TouchableOpacity

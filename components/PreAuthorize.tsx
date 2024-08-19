@@ -10,8 +10,6 @@ const PreAuthorizeVisitorModal = ({ isVisible, onClose, onSubmit, loading }: any
     const [formData, setFormData] = useState({
         phone: '',
         name: '',
-        house_id: '',
-        resident_id: '',
         mode_of_entry: '',
         vehicle_number: '',
         verification_number: '',
@@ -28,8 +26,6 @@ const PreAuthorizeVisitorModal = ({ isVisible, onClose, onSubmit, loading }: any
         setFormData({
             phone: '',
             name: '',
-            house_id: '',
-            resident_id: '',
             mode_of_entry: '',
             vehicle_number: '',
             verification_number: '',
@@ -71,26 +67,6 @@ const PreAuthorizeVisitorModal = ({ isVisible, onClose, onSubmit, loading }: any
                                 style={styles.input}
                                 value={formData.name}
                                 onChangeText={(text) => handleChange('name', text)}
-                            />
-                        </View>
-
-                        <View style={styles.inputContainer}>
-                            <JewaText style={styles.label}>House ID</JewaText>
-                            <TextInput
-                                style={styles.input}
-                                value={formData.house_id}
-                                onChangeText={(text) => handleChange('house_id', text)}
-                                keyboardType="numeric"
-                            />
-                        </View>
-
-                        <View style={styles.inputContainer}>
-                            <JewaText style={styles.label}>Resident ID</JewaText>
-                            <TextInput
-                                style={styles.input}
-                                value={formData.resident_id}
-                                onChangeText={(text) => handleChange('resident_id', text)}
-                                keyboardType="numeric"
                             />
                         </View>
                         <View style={styles.inputContainer}>

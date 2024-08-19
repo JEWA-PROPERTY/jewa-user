@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, TouchableOpacity, StyleSheet, Animated, Modal, TextInput, ScrollView, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Animated, Modal, TextInput, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { Tabs } from 'expo-router';
@@ -61,6 +61,9 @@ const FloatingActionButton = () => {
       const response = await axios.post('https://jewapropertypro.com/infinity/api/addalert', alarmData);
       console.log('Alarm raised successfully:', response.data);
       setIsAlarmModalVisible(false);
+      if (response.data.message === 'Alert has been sent') {
+        Alert.alert('Success', 'Alarm raised successfully');
+      }
     } catch (error) {
       console.error('Error raising alarm:', error);
     } finally {

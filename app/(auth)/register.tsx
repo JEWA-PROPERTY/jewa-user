@@ -15,7 +15,7 @@ import { defaultStyles } from "~/constants/Styles";
 import Colors from "~/constants/Colors";
 import { router } from "expo-router";
 
-function OTPVerification({ email, onVerificationSuccess }) {
+function OTPVerification({ email, onVerificationSuccess }: any) {
     const [otp, setOtp] = useState('');
     const [loading, setLoading] = useState(false);
 

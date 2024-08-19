@@ -15,7 +15,7 @@ export default function HomeTab() {
   const [alerts, setAlerts] = useState([]);
   const [communityUpdates, setCommunityUpdates] = useState([]);
 
-  const residentName = user?.email || 'Resident';
+  const residentName = user?.fullname || 'Resident';
   const houseNumber = 'F-62';
   // console.log('user', alerts.length, pendingActions.length, pendingNotifications.length);
   useEffect(() => {
