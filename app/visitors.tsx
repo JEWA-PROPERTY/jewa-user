@@ -47,7 +47,7 @@ const VisitorManagementPage: React.FC = () => {
       Alert.alert('Error', 'Unable to open phone app');
     }
   };
-  
+
   const fetchVisitors = async () => {
     if (!user || !user.userid) {
       setError('User ID not found');
@@ -94,12 +94,13 @@ const VisitorManagementPage: React.FC = () => {
         <JewaText>Status: {item.prebooked_status}</JewaText>
         <JewaText>Time In: {item.time_in}</JewaText>
         <JewaText>Time Out: {item.time_out}</JewaText>
+        <JewaText>Mode of Entry: {item.mode_of_entry}</JewaText>
         {item.event_type && <JewaText>Event: {item.event_type}</JewaText>}
-        {item.vehicle_number && <JewaText>Vehicle: {item.vehicle_number}</JewaText>}
+        {item.vehicle_number && <JewaText>Vehicle: {item.vehicle_number.toUpperCase()}</JewaText>}
       </View>
       <TouchableOpacity onPress={() => callMobilePhone(item.phone)}>
-          <Feather name="phone-call" size={24} color={Colors.primary} />
-        </TouchableOpacity>
+        <Feather name="phone-call" size={24} color={Colors.primary} />
+      </TouchableOpacity>
     </View>
   );
 
@@ -129,7 +130,6 @@ const VisitorManagementPage: React.FC = () => {
         renderItem={renderVisitorItem}
         keyExtractor={item => item.id.toString()}
         ListEmptyComponent={<JewaText style={styles.emptyJewaText}>No visitors found.</JewaText>}
-        style={{ marginBottom: 300 }}
       />
     </SafeAreaView>
   );
