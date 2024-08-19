@@ -244,7 +244,9 @@ export default function Home() {
     <SafeAreaView style={styles.container}>
       <Tab.Navigator
         screenOptions={{
-          tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold' },
+          tabBarLabelStyle: { fontSize: 14, 
+            fontFamily: 'Nunito_700Bold',
+           },
           tabBarIndicatorStyle: { backgroundColor: Colors.primary },
           tabBarStyle: { backgroundColor: 'white' },
           tabBarScrollEnabled: false,

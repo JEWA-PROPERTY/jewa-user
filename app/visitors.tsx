@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList, SafeAreaView, Image, ActivityIndicator, Platform, Linking, Alert, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, FlatList, SafeAreaView, ActivityIndicator, Platform, Linking, Alert, TouchableOpacity } from 'react-native';
 import { defaultStyles } from '~/constants/Styles';
 import Colors from '~/constants/Colors';
 import { useUserStore } from '~/store/user-storage';
 import JewaText from '~/components/JewaText';
 import { Feather, Ionicons } from '@expo/vector-icons';
+import PreAuthorizeVisitorModal from '~/components/PreAuthorize';
 
 type Visitor = {
   id: number;
@@ -33,6 +34,8 @@ const VisitorManagementPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { user } = useUserStore();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loadingModal, setLoadingModal] = useState(false);
 
   useEffect(() => {
     fetchVisitors();
@@ -83,6 +86,49 @@ const VisitorManagementPage: React.FC = () => {
     }
   };
 
+  const handlePreAuthorizeSubmit = async (formData: any) => {
+    setLoadingModal(true);
+
+    const payload = {
+      phone: formData.phone,
+      name: formData.name,
+      house_id: parseInt(formData.house_id),
+      resident_id: parseInt(formData.resident_id),
+      mode_of_entry: formData.mode_of_entry,
+      vehicle_number: formData.vehicle_number,
+      verification_number: formData.verification_number
+    }
+
+    console.log('Pre-authorize visitor payload:', payload);
+    try {
+      const response = await fetch('https://jewapropertypro.com/infinity/api/preauthorisevisitor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify([payload]),
+      });
+
+      console.log('Pre-authorize visitor response:', response);
+
+      if (!response.ok) {
+        throw new Error('Failed to pre-authorize visitor');
+      }
+
+      const data = await response.json();
+      console.log('Pre-authorize visitor response:', data);
+      Alert.alert('Success', 'Visitor pre-authorized successfully');
+      fetchVisitors(); // Refresh the visitors list
+      setIsModalVisible(false);
+    } catch (error) {
+      console.error('Error pre-authorizing visitor:', error);
+      Alert.alert('Error', 'Failed to pre-authorize visitor');
+
+    } finally {
+      setLoadingModal(false);
+    }
+  };
+
   const renderVisitorItem = ({ item }: { item: Visitor }) => (
     <View style={styles.visitorItem}>
       <View style={[styles.iconCircle, { backgroundColor: Colors.primary }]}>
@@ -124,12 +170,43 @@ const VisitorManagementPage: React.FC = () => {
     <SafeAreaView style={defaultStyles.container}>
       <View style={styles.headerTop}>
         <JewaText style={styles.sectionTitle}>Visitors</JewaText>
+        <TouchableOpacity
+          style={{
+            width: 200,
+            height: 40,
+            backgroundColor: Colors.primary,
+            borderRadius: 5,
+            justifyContent: 'center',
+            alignItems: 'center',
+            elevation: 4,
+            display: 'flex',
+          }}
+          onPress={() => setIsModalVisible(true)}
+        >
+          <JewaText
+            style={[
+              styles.sectionTitle,
+              {
+                fontSize: 16,
+                color: 'white',
+              },
+            ]}
+          >
+            Pre-authorize visitors
+          </JewaText>
+        </TouchableOpacity>
       </View>
       <FlatList
         data={visitors}
         renderItem={renderVisitorItem}
         keyExtractor={item => item.id.toString()}
         ListEmptyComponent={<JewaText style={styles.emptyJewaText}>No visitors found.</JewaText>}
+      />
+      <PreAuthorizeVisitorModal
+        isVisible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onSubmit={handlePreAuthorizeSubmit}
+        loading={loadingModal}
       />
     </SafeAreaView>
   );
@@ -138,7 +215,7 @@ const VisitorManagementPage: React.FC = () => {
 const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: 'Nunito_600SemiBold'
   },
   headerTop: {
     flexDirection: 'row',
@@ -193,7 +270,7 @@ const styles = StyleSheet.create({
   },
   visitorName: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: 'Nunito_700Bold',
   },
   emptyJewaText: {
     textAlign: 'center',
