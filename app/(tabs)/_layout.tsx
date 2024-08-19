@@ -1,17 +1,40 @@
-import { Link, Tabs } from 'expo-router';
-import { HeaderButton } from '../../components/HeaderButton';
-import { TabBarIcon } from '../../components/TabBarIcon';
-import Colors from '~/constants/Colors';
 import React, { useState, useRef } from 'react';
-import { BlurView } from 'expo-blur';
+import { View, TouchableOpacity, StyleSheet, Animated, Modal, TextInput, ScrollView, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import CustomHeader from '~/components/CustomHeader';
-import { View, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import { BlurView } from 'expo-blur';
+import { Tabs } from 'expo-router';
+import axios from 'axios';
+
+import Colors from '~/constants/Colors';
 import JewaText from '~/components/JewaText';
+import CustomHeader from '~/components/CustomHeader';
+import { TabBarIcon } from '~/components/TabBarIcon';
+import { useUserStore } from '~/store/user-storage';
+
+interface AlarmData {
+  house_id: number;
+  resident_id: number;
+  community_code: string;
+  subject: string;
+  description: string;
+  status: string;
+}
 
 const FloatingActionButton = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAlarmModalVisible, setIsAlarmModalVisible] = useState(false);
   const buttonAnimation = useRef(new Animated.Value(0)).current;
+  const [loading, setLoading] = useState(false);
+  const [alarmData, setAlarmData] = useState<AlarmData>({
+    house_id: 0,
+    resident_id: 0,
+    community_code: '',
+    subject: '',
+    description: '',
+    status: 'Pending',
+  });
+
+  const user = useUserStore(state => state.user);
 
   const toggleMenu = () => {
     Animated.timing(buttonAnimation, {
@@ -22,19 +45,36 @@ const FloatingActionButton = () => {
     setIsOpen(!isOpen);
   };
 
+  const openAlarmModal = () => {
+    setIsAlarmModalVisible(true);
+    setIsOpen(false);
+    setAlarmData({
+      ...alarmData,
+      house_id: 1,
+      resident_id: user?.userid!
+    });
+  };
+
+  const submitAlarm = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.post('https://jewapropertypro.com/infinity/api/addalert', alarmData);
+      console.log('Alarm raised successfully:', response.data);
+      setIsAlarmModalVisible(false);
+    } catch (error) {
+      console.error('Error raising alarm:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const riseAlarmStyle = {
     transform: [
       { scale: buttonAnimation },
       {
         translateY: buttonAnimation.interpolate({
           inputRange: [0, 1],
-          outputRange: [0, 0],
-        }),
-      },
-      {
-        translateX: buttonAnimation.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0, 0], 
+          outputRange: [0, -70],
         }),
       },
     ],
@@ -46,36 +86,69 @@ const FloatingActionButton = () => {
       {
         translateY: buttonAnimation.interpolate({
           inputRange: [0, 1],
-          outputRange: [0, 0],
-        }),
-      },
-      {
-        translateX: buttonAnimation.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0, 0], 
+          outputRange: [0, -130],
         }),
       },
     ],
   };
 
   return (
-    <View style={styles.fabContainer}>
-      <Animated.View style={[styles.fabOption, styles.fabOptionTop, riseAlarmStyle]}>
-        <TouchableOpacity style={styles.fabOptionButton} onPress={() => console.log('Rise Alarm')}>
-          <Ionicons name="alert-circle-outline" size={24} color={Colors.primary} />
-          <JewaText style={styles.fabOptionJewaText}>Rise Alarm</JewaText>
+    <>
+      <View style={styles.fabContainer}>
+        <Animated.View style={[styles.fabOption, riseAlarmStyle]}>
+          <TouchableOpacity style={styles.fabOptionButton} onPress={openAlarmModal}>
+            <Ionicons name="alert-circle-outline" size={24} color={Colors.primary} />
+            <JewaText style={styles.fabOptionText}>Raise Alarm</JewaText>
+          </TouchableOpacity>
+        </Animated.View>
+        <Animated.View style={[styles.fabOption, authoriseVisitorStyle]}>
+          <TouchableOpacity style={styles.fabOptionButton} onPress={() => console.log('Authorise Visitor')}>
+            <Ionicons name="person-add-outline" size={24} color={Colors.primary} />
+            <JewaText style={styles.fabOptionText}>Authorise Visitor</JewaText>
+          </TouchableOpacity>
+        </Animated.View>
+        <TouchableOpacity style={styles.fabButton} onPress={toggleMenu}>
+          <Ionicons name="add" size={24} color="white" />
         </TouchableOpacity>
-      </Animated.View>
-      <Animated.View style={[styles.fabOption, styles.fabOptionBottom, authoriseVisitorStyle]}>
-        <TouchableOpacity style={styles.fabOptionButton} onPress={() => console.log('Authorise Visitor')}>
-          <Ionicons name="person-add-outline" size={24} color={Colors.primary} />
-          <JewaText style={styles.fabOptionJewaText}>Authorise Visitor</JewaText>
-        </TouchableOpacity>
-      </Animated.View>
-      <TouchableOpacity style={styles.fabButton} onPress={toggleMenu}>
-        <Ionicons name="add" size={24} color="white" />
-      </TouchableOpacity>
-    </View>
+      </View>
+      <Modal
+        visible={isAlarmModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setIsAlarmModalVisible(false)}
+        style={{ flex: 1, width: '100%' }}
+      >
+        <View style={styles.modalContainer}>
+          <ScrollView contentContainerStyle={styles.modalContent}>
+            <JewaText style={styles.modalTitle}>Raise Alert to the Security guard</JewaText>
+            <TextInput
+              style={styles.input}
+              placeholder="Subject"
+              value={alarmData.subject}
+              onChangeText={(text) => setAlarmData({ ...alarmData, subject: text })}
+            />
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              placeholder="Description"
+              multiline
+              numberOfLines={4}
+              value={alarmData.description}
+              onChangeText={(text) => setAlarmData({ ...alarmData, description: text })}
+            />
+            <TouchableOpacity style={styles.submitButton} onPress={submitAlarm}>
+              {loading ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <JewaText style={styles.submitButtonText}>Submit</JewaText>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelButton} onPress={() => setIsAlarmModalVisible(false)}>
+              <JewaText style={styles.cancelButtonText}>Cancel</JewaText>
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
+      </Modal>
+    </>
   );
 };
 
@@ -156,21 +229,69 @@ const styles = StyleSheet.create({
     elevation: 4,
     width: 160,
   },
-  fabOptionTop: {
-    top: -70,
-  },
-  fabOptionBottom: {
-    top: -130,
-  },
   fabOptionButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
   },
-  fabOptionJewaText: {
+  fabOptionText: {
     color: 'black',
     fontSize: 14,
+    fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    width: '100%',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 8,
+    width: '80%',
+    maxWidth: 400,
+    marginTop: 130,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: Colors.lightGray,
+    borderRadius: 4,
+    padding: 8,
+    marginBottom: 12,
+  },
+  textArea: {
+    height: 100,
+    textAlignVertical: 'top',
+  },
+  submitButton: {
+    backgroundColor: Colors.primary,
+    padding: 12,
+    borderRadius: 4,
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  submitButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  cancelButton: {
+    padding: 12,
+    borderRadius: 4,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.primary,
+  },
+  cancelButtonText: {
+    color: Colors.primary,
     fontWeight: 'bold',
   },
 });

@@ -7,6 +7,7 @@ import { Picker } from '@react-native-picker/picker';
 import VisitorManagementPage from '../visitors';
 import DeliveryManagementPage from '~/pages/Delivery';
 import JewaText from '~/components/JewaText';
+import ManagementScreen from '~/pages/ManagementPage';
 
 type TabParamList = {
   Delivery: undefined;
@@ -47,79 +48,6 @@ type Item = DeliveryItem | VisitorItem | IssueItem;
 interface ItemsState {
   pending: Item[];
   approved: Item[];
-}
-
-function ManagementScreen({ type }: { type: ItemType }) {
-  const [items, setItems] = useState<ItemsState>({ pending: [], approved: [] });
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isAddingItem, setIsAddingItem] = useState(false);
-
-  useEffect(() => {
-    // Simulated data fetch
-    setItems({
-      pending: [
-        { id: '1', status: 'pending', image: 'https://example.com/image1.jpg', trackingNumber: 'TRK123', courier: 'FedEx', leaveAtDoor: true } as DeliveryItem,
-        { id: '2', status: 'pending', image: 'https://example.com/image2.jpg', name: 'Jane Smith', type: 'group', phoneNumber: '0987654321' } as VisitorItem,
-      ],
-      approved: [
-        { id: '3', status: 'approved', image: 'https://example.com/image3.jpg', title: 'Broken Light', description: 'Light in lobby not working', priority: 'medium' } as IssueItem,
-      ],
-    });
-  }, []);
-
-  const renderItem = (item: Item) => (
-    <View key={item.id} style={styles.item}>
-      <Image source={{ uri: item.image }} style={styles.itemImage} />
-      <View style={styles.itemContent}>
-        {'trackingNumber' in item && <JewaText>Tracking: {item.trackingNumber}</JewaText>}
-        {'name' in item && <JewaText>Name: {item.name}</JewaText>}
-        {'title' in item && <JewaText>Title: {item.title}</JewaText>}
-        <JewaText>Status: {item.status}</JewaText>
-      </View>
-    </View>
-  );
-
-  const renderSection = (title: string, data: Item[]) => (
-    <View style={styles.section}>
-      <JewaText style={styles.sectionTitle}>{title}</JewaText>
-      {data.map(renderItem)}
-    </View>
-  );
-
-  return (
-    <View style={styles.screenContainer}>
-      {type === 'Visitor' && (
-        <View style={styles.searchContainer}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search Visitors"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-          <TouchableOpacity style={styles.searchButton}>
-            <Ionicons name="search" size={24} color={Colors.primary} />
-          </TouchableOpacity>
-        </View>
-      )}
-      <ScrollView>
-        {renderSection('Pending', items.pending)}
-        {renderSection('Approved', items.approved)}
-      </ScrollView>
-
-      <AddItemModal
-        visible={isAddingItem}
-        onClose={() => setIsAddingItem(false)}
-        onAdd={(item) => {
-          setItems({
-            ...items,
-            pending: [...items.pending, item],
-          });
-          setIsAddingItem(false);
-        }}
-        type={type}
-      />
-    </View>
-  );
 }
 
 interface AddItemModalProps {

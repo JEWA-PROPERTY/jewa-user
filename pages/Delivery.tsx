@@ -63,7 +63,9 @@ const DeliveryManagementPage: React.FC = () => {
             if (data && Array.isArray(data.message)) {
                 const fetchedDeliveries: Delivery[] = data.message;
                 console.log("Deliveries::", fetchedDeliveries)
-                setPendingDeliveries(fetchedDeliveries.filter(d => d.leaveatgate_status === 'Pending'));
+                setPendingDeliveries(fetchedDeliveries.filter(d => d.leaveatgate_status !== 'Picked' && d.delivery_status === "1" 
+                && d.resident_id === user?.userid));
+        
                 setDeliveries(fetchedDeliveries.filter(d => d.delivery_status === "2"));
             } else {
                 setPendingDeliveries([]);
@@ -93,7 +95,6 @@ const DeliveryManagementPage: React.FC = () => {
             style={styles.pendingDeliveryItem}
             onPress={() => {
                 setSelectedDelivery(item);
-                setShowApprovalModal(true);
             }}
         >
             <View style={styles.pendingIconContainer}>
@@ -139,24 +140,25 @@ const DeliveryManagementPage: React.FC = () => {
                         <JewaText style={styles.ticketTitle}>{selectedDelivery?.type_of_delivery || 'Unknown Delivery'}</JewaText>
                     </View>
                     <View style={styles.ticketRow}>
-                        <Ionicons name="time-outline" size={24} color={Colors.gray} />
-                        <JewaText style={styles.ticketDetail}> {new Date(selectedDelivery?.created_at || '').toLocaleString()}</JewaText>
+
+                        <JewaText style={styles.ticketDetail}>Time In: {new Date(selectedDelivery?.time_in || '').toLocaleString()}</JewaText>
                     </View>
                     <View style={styles.ticketRow}>
-                        <Ionicons name="checkmark-circle-outline" size={24} color={Colors.gray} />
-                        <JewaText style={styles.ticketDetail}>{selectedDelivery?.delivery_status === '2' ? 'Approved' : 'Pending'}</JewaText>
+
+                        <JewaText style={styles.ticketDetail}>Time Out: {new Date(selectedDelivery?.time_out || '').toLocaleString()}</JewaText>
                     </View>
                     <View style={styles.ticketRow}>
-                        <Ionicons name="key-outline" size={24} color={Colors.gray} />
-                        <JewaText style={styles.ticketDetail}> {selectedDelivery?.otp || 'N/A'}</JewaText>
+                        <JewaText style={styles.ticketDetail}>Status: {selectedDelivery?.delivery_status === '2' ? 'Approved' : 'Pending'}</JewaText>
                     </View>
                     <View style={styles.ticketRow}>
-                        <Ionicons name="call-outline" size={24} color={Colors.gray} />
-                        <JewaText style={styles.ticketDetail}> {selectedDelivery?.delivery_phone}</JewaText>
+                        <JewaText style={styles.ticketDetail}> OTP:{selectedDelivery?.otp || 'N/A'}</JewaText>
                     </View>
                     <View style={styles.ticketRow}>
-                        <Ionicons name="home-outline" size={24} color={Colors.gray} />
-                        <JewaText style={styles.ticketDetail}> {selectedDelivery?.leaveatgate_status ? 'Yes' : 'No'}</JewaText>
+
+                        <JewaText style={styles.ticketDetail}> Phone:{selectedDelivery?.delivery_phone}</JewaText>
+                    </View>
+                    <View style={styles.ticketRow}>
+                        <JewaText style={styles.ticketDetail}>Leave at gate: {selectedDelivery?.leaveatgate_status ? 'Yes' : 'No'}</JewaText>
                     </View>
                     <TouchableOpacity style={styles.closeButton} onPress={() => setSelectedDelivery(null)}>
                         <Ionicons name="close-circle" size={24} color={Colors.primary} />
@@ -214,7 +216,12 @@ const DeliveryManagementPage: React.FC = () => {
     return (
         <SafeAreaView style={defaultStyles.container}>
             <View style={styles.pendingDeliveriesContainer}>
-                <JewaText style={styles.sectionTitle}>Pending pick up at the gate</JewaText>
+                <JewaText style={{
+                    fontSize: 20,
+                    marginBottom: 10,
+                    fontFamily: 'Nunito_700Bold',
+                    color: Colors.primary,
+                }}>Pending pick up at the gate</JewaText>
                 {pendingDeliveries.length > 0 ? (
                     <FlatList
                         data={pendingDeliveries}
@@ -229,7 +236,12 @@ const DeliveryManagementPage: React.FC = () => {
             </View>
 
             <View style={styles.approvedDeliveriesContainer}>
-                <JewaText style={styles.sectionTitle}>Allowed deliveries</JewaText>
+                <JewaText style={{
+                    fontSize: 20,
+                    marginBottom: 10,
+                    fontFamily: 'Nunito_700Bold',
+                    color: Colors.primary,
+                }}>Allowed deliveries</JewaText>
                 {deliveries.length > 0 ? (
                     <FlatList
                         data={deliveries}
@@ -255,11 +267,14 @@ const styles = StyleSheet.create({
     loadingJewaText: {
         marginTop: 10,
         fontSize: 16,
+        color: Colors.gray,
+        fontFamily: 'Nunito_600SemiBold',
     },
     errorJewaText: {
         fontSize: 16,
         color: 'red',
         marginBottom: 10,
+        fontFamily: 'Nunito_600SemiBold',
     },
     pendingDeliveriesContainer: {
         padding: 16,
@@ -269,9 +284,8 @@ const styles = StyleSheet.create({
         padding: 16,
     },
     sectionTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
         marginBottom: 10,
+        fontFamily: 'Nunito_700Bold',
     },
     pendingDeliveryItem: {
         marginRight: 16,
@@ -305,7 +319,7 @@ const styles = StyleSheet.create({
     },
     deliveryName: {
         fontSize: 16,
-        fontWeight: 'bold',
+        fontFamily: 'Nunito_700Bold',
     },
     modalContainer: {
         flex: 1,
@@ -447,12 +461,13 @@ const styles = StyleSheet.create({
     },
     ticketTitle: {
         fontSize: 20,
-        fontWeight: 'bold',
+        fontFamily: 'Nunito_700Bold',
         marginBottom: 10,
     },
     ticketDetail: {
         fontSize: 16,
         marginBottom: 5,
+        fontFamily: 'Nunito_600SemiBold',
     },
     approvalButtonText: {
         color: 'white',

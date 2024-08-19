@@ -92,6 +92,7 @@ export default function Register() {
     const [phone, setPhone] = useState('');
     const [fname, setFName] = useState('');
     const [lname, setLName] = useState('');
+    const [code, setCode] = useState('');
     const [showOTPVerification, setShowOTPVerification] = useState(false);
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 80 : 0;
 
@@ -109,7 +110,8 @@ export default function Register() {
             usertype_id: 1,
             password: password,
             fname: fname,
-            lname: lname
+            lname: lname,
+            code: code
         };
 
         try {
@@ -189,6 +191,17 @@ export default function Register() {
                         keyboardType="email-address"
                         value={lname}
                         onChangeText={setLName}
+                    />
+                </View>
+
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={[styles.input, { flex: 1 }]}
+                        placeholder="Community Code"
+                        placeholderTextColor={Colors.gray}
+                        keyboardType="email-address"
+                        value={code}
+                        onChangeText={setCode}
                     />
                 </View>
          

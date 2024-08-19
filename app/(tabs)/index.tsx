@@ -1,4 +1,4 @@
-import { StyleSheet, View, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, SafeAreaView, FlatList } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,14 +9,12 @@ import { useEffect, useState } from 'react';
 
 export default function HomeTab() {
   const headerHeight = useHeaderHeight();
-  const {user} = useUserStore();
+  const { user } = useUserStore();
   const [pendingActions, setPendingActions] = useState([]);
   const [pendingNotifications, setPendingNotifications] = useState([]);
   const [alerts, setAlerts] = useState([]);
+  const [communityUpdates, setCommunityUpdates] = useState([]);
 
-  const pendingDeliveries = 3;
-  const activeVisitorPasses = 5;
-  const domesticHelpCount = 2;
   const residentName = user?.email || 'Resident';
   const houseNumber = 'F-62';
   // console.log('user', alerts.length, pendingActions.length, pendingNotifications.length);
@@ -32,7 +30,8 @@ export default function HomeTab() {
         });
         const data = await response.json();
         setPendingActions(data.pendingactions || []);
-        setPendingNotifications(data.pendingnotification || []);
+        setPendingNotifications(data.pendingnotification || [])
+        setCommunityUpdates(data.communityupdates || []);
         setAlerts(data.alert || []);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -59,12 +58,12 @@ export default function HomeTab() {
           <View style={styles.actionButtons}>
             <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/(tabs)/two')}>
               <Ionicons name="person-add-outline" size={24} color="white" />
-              <JewaText style={styles.actionButtonJewaText}>Visitor</JewaText>
+              <JewaText style={styles.actionButtonJewaText}>Pre-authorize Visitor</JewaText>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/management')}>
+            {/* <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/management')}>
               <Ionicons name="people-outline" size={24} color="white" />
-              <JewaText style={styles.actionButtonJewaText}>Manage Help</JewaText>
-            </TouchableOpacity>
+              <JewaText style={styles.actionButtonJewaText}></JewaText>
+            </TouchableOpacity> */}
             <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/(tabs)/two')}>
               <Ionicons name="warning-outline" size={24} color="white" />
               <JewaText style={styles.actionButtonJewaText}>Report Issue</JewaText>
@@ -76,36 +75,44 @@ export default function HomeTab() {
           <TouchableOpacity style={styles.summaryCard} onPress={() => router.push('/(tabs)/two')}>
             <Ionicons name="cube-outline" size={36} color="#007AFF" />
             <JewaText style={styles.summaryTitle}>Deliveries</JewaText>
-            <JewaText style={styles.summaryCount}>{pendingDeliveries}</JewaText>
+            <JewaText style={styles.summaryCount}>{pendingActions.length}</JewaText>
+            <JewaText style={styles.summarySubJewaText}>At the gate</JewaText>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.summaryCard} onPress={() => router.push('/(tabs)/two')}>
+            <Ionicons name="notifications" size={36} color="#FF9500" />
+            <JewaText style={styles.summaryTitle}>Notifications</JewaText>
+            <JewaText style={styles.summaryCount}>{pendingNotifications.length}</JewaText>
             <JewaText style={styles.summarySubJewaText}>Pending</JewaText>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.summaryCard} onPress={() => router.push('/(tabs)/two')}>
-            <Ionicons name="people-outline" size={36} color="#FF9500" />
-            <JewaText style={styles.summaryTitle}>Visitors</JewaText>
-            <JewaText style={styles.summaryCount}>{activeVisitorPasses}</JewaText>
-            <JewaText style={styles.summarySubJewaText}>Active Passes</JewaText>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.summaryCard} onPress={() => router.push('/(tabs)/two')}>
-            <Ionicons name="home-outline" size={36} color="#5856D6" />
-            <JewaText style={styles.summaryTitle}>Domestic Help</JewaText>
-            <JewaText style={styles.summaryCount}>{domesticHelpCount}</JewaText>
+            <Ionicons name="alert" size={36} color="#5856D6" />
+            <JewaText style={styles.summaryTitle}>Alerts</JewaText>
+            <JewaText style={styles.summaryCount}>{alerts.length}</JewaText>
             <JewaText style={styles.summarySubJewaText}>Registered</JewaText>
           </TouchableOpacity>
         </View>
 
         <View style={styles.communitySection}>
           <JewaText style={styles.sectionTitle}>Community Updates</JewaText>
-          <TouchableOpacity style={styles.updateItem} onPress={() => router.push('/')}>
-            <JewaText style={styles.updateTitle}>Monthly Meeting</JewaText>
-            <JewaText style={styles.updateSubJewaText}>Scheduled for next Sunday at 10 AM</JewaText>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.updateItem} onPress={() => router.push('/')}>
-            <JewaText style={styles.updateTitle}>New Gym Equipment</JewaText>
-            <JewaText style={styles.updateSubJewaText}>Installation completed yesterday</JewaText>
-          </TouchableOpacity>
+          <FlatList
+            data={communityUpdates}
+            ListEmptyComponent={
+              <View style={styles.updateItem}>
+                <JewaText>No updates available</JewaText>
+              </View>
+            }
+            keyExtractor={(item: any) => item.id.toString()}
+            renderItem={({ item }) => (
+              <View style={styles.updateItem}>
+                <JewaText style={styles.updateTitle}>{item.subject}</JewaText>
+                <JewaText style={styles.updateSubJewaText}>{item.description}</JewaText>
+              </View>
+            )}
+          />
         </View>
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -177,7 +184,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   summaryTitle: {
-    fontSize: 16,
+    fontSize: 12,
     fontFamily: 'Nunito_600SemiBold',
     marginTop: 8,
   },
