@@ -98,7 +98,8 @@ const VisitorManagementPage: React.FC = () => {
       resident_id: user?.userid,
       mode_of_entry: formData.mode_of_entry,
       vehicle_number: formData.vehicle_number,
-      verification_number: formData.verification_number
+      verification_number: formData.verification_number,
+      validity: formData.validity,
     }
 
     console.log('Pre-authorize visitor payload:', payload);
