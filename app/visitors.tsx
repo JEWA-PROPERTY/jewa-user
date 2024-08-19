@@ -4,7 +4,7 @@ import { defaultStyles } from '~/constants/Styles';
 import Colors from '~/constants/Colors';
 import { useUserStore } from '~/store/user-storage';
 import JewaText from '~/components/JewaText';
-import { Feather, Ionicons } from '@expo/vector-icons';
+import { Feather, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import PreAuthorizeVisitorModal from '~/components/PreAuthorize';
 
 type Visitor = {
@@ -20,6 +20,7 @@ type Visitor = {
   image_url: string | null;
   prebooked_status: string;
   otp: string;
+  otp_status: string;
   notification_response: string | null;
   notif_id: string | null;
   mode_of_entry: string;
@@ -36,6 +37,7 @@ const VisitorManagementPage: React.FC = () => {
   const { user } = useUserStore();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loadingModal, setLoadingModal] = useState(false);
+  const [expandedVisitor, setExpandedVisitor] = useState<number | null>(null);
 
   useEffect(() => {
     fetchVisitors();
@@ -118,38 +120,87 @@ const VisitorManagementPage: React.FC = () => {
       const data = await response.json();
       console.log('Pre-authorize visitor response:', data);
       Alert.alert('Success', 'Visitor pre-authorized successfully');
-      fetchVisitors(); 
-      // clear form
-      setIsModalVisible(false)
+      fetchVisitors();
+      setIsModalVisible(false);
     } catch (error) {
       console.error('Error pre-authorizing visitor:', error);
       Alert.alert('Error', 'Failed to pre-authorize visitor');
-
     } finally {
       setIsModalVisible(false);
       setLoadingModal(false);
     }
   };
 
+  const revokeValidity = async (visitorId: number) => {
+    Alert.alert(
+      "Revoke OTP Validity",
+      "Are you sure you want to revoke the validity of this OTP?",
+      [
+        { text: "No", style: "cancel" },
+        { 
+          text: "Yes", 
+          onPress: async () => {
+            try {
+              const response = await fetch('https://jewapropertypro.com/infinity/api/otprevoked', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ visitor_id: visitorId }),
+              });
+
+              if (!response.ok) {
+                throw new Error('Failed to revoke OTP');
+              }
+
+              Alert.alert('Success', 'OTP validity revoked successfully');
+              fetchVisitors();
+            } catch (error) {
+              console.error('Error revoking OTP:', error);
+              Alert.alert('Error', 'Failed to revoke OTP validity');
+            }
+          }
+        }
+      ]
+    );
+  };
+
   const renderVisitorItem = ({ item }: { item: Visitor }) => (
-    <View style={styles.visitorItem}>
-      <View style={[styles.iconCircle, { backgroundColor: Colors.primary }]}>
-        <Ionicons name={'person-outline'} size={24} color="#fff" />
+    <TouchableOpacity 
+      style={styles.visitorItem}
+      onPress={() => setExpandedVisitor(expandedVisitor === item.id ? null : item.id)}
+    >
+      <View style={styles.visitorHeader}>
+        <View style={[styles.iconCircle, { backgroundColor: Colors.primary }]}>
+          <Ionicons name={'person-outline'} size={24} color="#fff" />
+        </View>
+        <View style={styles.visitorInfo}>
+          <JewaText style={styles.visitorName}>{item.name}</JewaText>
+          <JewaText>Status: {item.prebooked_status}</JewaText>
+          <JewaText>Validity: {item.validity || 0} days</JewaText>
+        </View>
+        <View style={styles.actionButtons}>
+          <TouchableOpacity onPress={() => callMobilePhone(item.phone)}>
+            <Feather name="phone-call" size={24} color={Colors.primary} />
+          </TouchableOpacity>
+          {item.otp_status !== 'Invalid' && (
+            <TouchableOpacity onPress={() => revokeValidity(item.id)}>
+              <MaterialCommunityIcons name="account-cancel" size={24} color={Colors.primary} />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
-      <View style={styles.visitorInfo}>
-        <JewaText style={styles.visitorName}>{item.name}</JewaText>
-        {item.otp && <JewaText>OTP: {item.otp}</JewaText>}
-        <JewaText>Status: {item.prebooked_status}</JewaText>
-        <JewaText>Time In: {item.time_in}</JewaText>
-        <JewaText>Time Out: {item.time_out}</JewaText>
-        <JewaText>Mode of Entry: {item.mode_of_entry}</JewaText>
-        {item.event_type && <JewaText>Event: {item.event_type}</JewaText>}
-        {item.vehicle_number && <JewaText>Vehicle: {item.vehicle_number.toUpperCase()}</JewaText>}
-      </View>
-      <TouchableOpacity onPress={() => callMobilePhone(item.phone)}>
-        <Feather name="phone-call" size={24} color={Colors.primary} />
-      </TouchableOpacity>
-    </View>
+      {expandedVisitor === item.id && (
+        <View style={styles.expandedInfo}>
+          {item.otp && <JewaText>OTP: {item.otp}</JewaText>}
+          <JewaText>Time In: {item.time_in || 'N/A'}</JewaText>
+          <JewaText>Time Out: {item.time_out || 'N/A'}</JewaText>
+          <JewaText>Mode of Entry: {item.mode_of_entry}</JewaText>
+          {item.event_type && <JewaText>Event: {item.event_type}</JewaText>}
+          {item.vehicle_number && <JewaText>Vehicle: {item.vehicle_number.toUpperCase()}</JewaText>}
+        </View>
+      )}
+    </TouchableOpacity>
   );
 
   if (loading) {
@@ -173,27 +224,10 @@ const VisitorManagementPage: React.FC = () => {
       <View style={styles.headerTop}>
         <JewaText style={styles.sectionTitle}>Visitors</JewaText>
         <TouchableOpacity
-          style={{
-            width: 200,
-            height: 40,
-            backgroundColor: Colors.primary,
-            borderRadius: 5,
-            justifyContent: 'center',
-            alignItems: 'center',
-            elevation: 4,
-            display: 'flex',
-          }}
+          style={styles.preAuthorizeButton}
           onPress={() => setIsModalVisible(true)}
         >
-          <JewaText
-            style={[
-              styles.sectionTitle,
-              {
-                fontSize: 16,
-                color: 'white',
-              },
-            ]}
-          >
+          <JewaText style={styles.preAuthorizeButtonText}>
             Pre-authorize visitors
           </JewaText>
         </TouchableOpacity>
@@ -202,7 +236,7 @@ const VisitorManagementPage: React.FC = () => {
         data={visitors}
         renderItem={renderVisitorItem}
         keyExtractor={item => item.id.toString()}
-        ListEmptyComponent={<JewaText style={styles.emptyJewaText}>No visitors found.</JewaText>}
+        ListEmptyComponent={<JewaText style={styles.emptyText}>No visitors found.</JewaText>}
       />
       <PreAuthorizeVisitorModal
         isVisible={isModalVisible}
@@ -219,54 +253,37 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Nunito_600SemiBold'
   },
-  
   headerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 12,
-    marginLeft: 21,
+    marginHorizontal: 16,
   },
-  addButton: {
+  preAuthorizeButton: {
     backgroundColor: Colors.primary,
-    width: 45,
-    height: 45,
-    borderRadius: 28,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 4,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-  },
-  input: {
-    backgroundColor: Colors.lightGray,
-    padding: 10,
-    borderRadius: 10,
-    fontSize: 20,
-    marginBottom: 20,
-    width: '80%',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  preAuthorizeButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontFamily: 'Nunito_600SemiBold',
   },
   visitorItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: 'white',
-    padding: 16,
     marginHorizontal: 16,
     marginBottom: 8,
     borderRadius: 8,
+    overflow: 'hidden',
   },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 16,
+  visitorHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
   },
   visitorInfo: {
     flex: 1,
@@ -275,7 +292,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Nunito_700Bold',
   },
-  emptyJewaText: {
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: 70,
+  },
+  expandedInfo: {
+    padding: 16,
+    backgroundColor: Colors.lightGray,
+  },
+  emptyText: {
     textAlign: 'center',
     marginTop: 32,
   },

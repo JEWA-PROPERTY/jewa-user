@@ -35,11 +35,11 @@ const CustomHeader = () => {
                             alignItems: 'center',
                             marginTop: 10,
                         }}>
-                        <JewaText style={{ color: '#fff', fontWeight: '500', fontSize: 16 }}>{initials}</JewaText>
+                        <JewaText style={{ color: '#fff', fontSize: 16 }}>{initials}</JewaText>
                     </TouchableOpacity>
                 </Link>
 
-                <JewaText style={{ color: Colors.dark, fontSize: 20, fontWeight: '700', fontFamily: 'Nunito_700Bold' }}>Hse F-62</JewaText>
+                <JewaText style={{ color: Colors.dark, fontSize: 20, fontFamily: 'Nunito_700Bold' }}>Hse F-62</JewaText>
 
                 <Link href={'/notifications'} asChild>
                     <TouchableOpacity

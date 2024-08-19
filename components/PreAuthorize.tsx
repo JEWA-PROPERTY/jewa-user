@@ -15,6 +15,7 @@ const PreAuthorizeVisitorModal = ({ isVisible, onClose, onSubmit, loading }: any
         mode_of_entry: '',
         vehicle_number: '',
         verification_number: '',
+        validity: '',
     });
 
     //@ts-ignore
@@ -32,6 +33,7 @@ const PreAuthorizeVisitorModal = ({ isVisible, onClose, onSubmit, loading }: any
             mode_of_entry: '',
             vehicle_number: '',
             verification_number: '',
+            validity: '',
         })
         onClose();
     };
@@ -89,6 +91,14 @@ const PreAuthorizeVisitorModal = ({ isVisible, onClose, onSubmit, loading }: any
                                 value={formData.resident_id}
                                 onChangeText={(text) => handleChange('resident_id', text)}
                                 keyboardType="numeric"
+                            />
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <JewaText style={styles.label}>Validity in Days</JewaText>
+                            <TextInput
+                                style={styles.input}
+                                value={formData.validity}
+                                onChangeText={(text) => handleChange('validity', text)}
                             />
                         </View>
 

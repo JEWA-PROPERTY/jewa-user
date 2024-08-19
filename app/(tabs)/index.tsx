@@ -19,7 +19,7 @@ export default function HomeTab() {
   const domesticHelpCount = 2;
   const residentName = user?.email || 'Resident';
   const houseNumber = 'F-62';
-
+  // console.log('user', alerts.length, pendingActions.length, pendingNotifications.length);
   useEffect(() => {
     const fetchData = async () => {
       try {
