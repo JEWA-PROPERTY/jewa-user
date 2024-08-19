@@ -1,5 +1,5 @@
 import React from 'react';
-import { View,StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { defaultStyles } from '~/constants/Styles';
 import { Link } from 'expo-router';
 import Colors from '~/constants/Colors';
@@ -63,23 +63,22 @@ export default function Home() {
                     JewaTextTransform: 'uppercase',
                     justifyContent: 'center',
                     textAlign: 'center',
-                    fontWeight: '700',
-        
                 }]}>Geti App</JewaText>
+                <JewaText style={[{
+                    fontFamily: 'Nunito_400Regular',
+                    fontSize: 16,
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    marginTop: 20,
+                    textTransform: 'uppercase',
+                }]}>Safeguard your community.</JewaText>
                 <JewaText style={[{
                     fontFamily: 'Nunito_400Regular',
                     fontSize: 16,
                     JewaTextTransform: 'uppercase',
                     justifyContent: 'center',
                     textAlign: 'center',
-                    marginTop: 20,
-                }]}>Safeguard your community,</JewaText>
-                            <JewaText style={[{
-                    fontFamily: 'Nunito_400Regular',
-                    fontSize: 16,
-                    JewaTextTransform: 'uppercase',
-                    justifyContent: 'center',
-                    textAlign: 'center',
+                    textTransform: 'uppercase',
                 }]}>safeguard your home.</JewaText>
             </View>
             <View style={styles.buttons}>

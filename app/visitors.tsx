@@ -118,13 +118,15 @@ const VisitorManagementPage: React.FC = () => {
       const data = await response.json();
       console.log('Pre-authorize visitor response:', data);
       Alert.alert('Success', 'Visitor pre-authorized successfully');
-      fetchVisitors(); // Refresh the visitors list
-      setIsModalVisible(false);
+      fetchVisitors(); 
+      // clear form
+      setIsModalVisible(false)
     } catch (error) {
       console.error('Error pre-authorizing visitor:', error);
       Alert.alert('Error', 'Failed to pre-authorize visitor');
 
     } finally {
+      setIsModalVisible(false);
       setLoadingModal(false);
     }
   };
@@ -217,6 +219,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Nunito_600SemiBold'
   },
+  
   headerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',

@@ -5,16 +5,42 @@ import { Ionicons } from '@expo/vector-icons';
 import Colors from '~/constants/Colors';
 import { useUserStore } from '~/store/user-storage';
 import JewaText from '~/components/JewaText';
+import { useEffect, useState } from 'react';
 
 export default function HomeTab() {
   const headerHeight = useHeaderHeight();
   const {user} = useUserStore();
+  const [pendingActions, setPendingActions] = useState([]);
+  const [pendingNotifications, setPendingNotifications] = useState([]);
+  const [alerts, setAlerts] = useState([]);
 
   const pendingDeliveries = 3;
   const activeVisitorPasses = 5;
   const domesticHelpCount = 2;
   const residentName = user?.email || 'Resident';
   const houseNumber = 'F-62';
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://jewapropertypro.com/infinity/api/residentdashboard', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ resident_id: user?.userid }),
+        });
+        const data = await response.json();
+        setPendingActions(data.pendingactions || []);
+        setPendingNotifications(data.pendingnotification || []);
+        setAlerts(data.alert || []);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView

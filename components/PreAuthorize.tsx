@@ -16,7 +16,6 @@ const PreAuthorizeVisitorModal = ({ isVisible, onClose, onSubmit, loading }: any
         vehicle_number: '',
         verification_number: '',
     });
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
     //@ts-ignore
     const handleChange = (key, value) => {
@@ -25,6 +24,15 @@ const PreAuthorizeVisitorModal = ({ isVisible, onClose, onSubmit, loading }: any
 
     const handleSubmit = () => {
         onSubmit(formData);
+        setFormData({
+            phone: '',
+            name: '',
+            house_id: '',
+            resident_id: '',
+            mode_of_entry: '',
+            vehicle_number: '',
+            verification_number: '',
+        })
         onClose();
     };
 
