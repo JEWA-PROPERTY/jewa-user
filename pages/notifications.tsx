@@ -30,7 +30,12 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ notifications, onNo
     const renderNotificationItem = ({ item }: { item: Notification }) => {
         const notificationType = item.notification_type || item.type_of_delivery || 'General';
         const { color, icon } = notificationTypeConfig[notificationType] || notificationTypeConfig.General;
-
+    
+        const statusColor =
+            item.notification_status === 'Leave at the gate' ? '#FFA500' : 
+            item.notification_status === 'Decline' ? '#FF0000' :          
+            '#4CAF50';                                                    
+    
         return (
             <TouchableOpacity style={styles.notificationItem} onPress={() => onNotificationPress(item)}>
                 <View style={[styles.iconCircle, { backgroundColor: color }]}>
@@ -46,21 +51,19 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ notifications, onNo
                     </JewaText>
                 </View>
                 <View style={styles.notificationStatus}>
-                    <JewaText style={[
-                        styles.statusJewaText,
-                        item.notification_status === 'Pending' ? styles.pendingStatus : styles.respondedStatus
-                    ]}>
+                    <JewaText style={[styles.statusJewaText, { color: statusColor }]}>
                         {item.notification_status}
                     </JewaText>
                     <Ionicons
                         name={item.notification_status === 'Pending' ? 'time-outline' : 'checkmark-circle-outline'}
                         size={24}
-                        color={item.notification_status === 'Pending' ? '#FFA500' : '#4CAF50'}
+                        color={statusColor}
                     />
                 </View>
             </TouchableOpacity>
         );
     };
+    
 
     return (
         <View style={styles.container}>

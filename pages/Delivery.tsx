@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, FlatList, SafeAreaView, Image, Modal, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, FlatList, SafeAreaView, Image, Modal, ActivityIndicator, ScrollView } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { defaultStyles } from '~/constants/Styles';
 import Colors from '~/constants/Colors';
@@ -30,6 +30,7 @@ type Delivery = {
 const DeliveryManagementPage: React.FC = () => {
     const [deliveries, setDeliveries] = useState<Delivery[]>([]);
     const [pendingDeliveries, setPendingDeliveries] = useState<Delivery[]>([]);
+    const [pickedDeliveries, setPickedDeliveries] = useState<Delivery[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedDelivery, setSelectedDelivery] = useState<Delivery | null>(null);
@@ -64,6 +65,9 @@ const DeliveryManagementPage: React.FC = () => {
                 const fetchedDeliveries: Delivery[] = data.message;
                 console.log("Deliveries::", fetchedDeliveries)
                 setPendingDeliveries(fetchedDeliveries.filter(d => d.leaveatgate_status !== 'Picked' && d.delivery_status === "1"
+                    && d.resident_id === user?.userid));
+
+                setPickedDeliveries(fetchedDeliveries.filter(d => d.leaveatgate_status === 'Picked' && d.delivery_status === "2"
                     && d.resident_id === user?.userid));
 
                 setDeliveries(fetchedDeliveries.filter(d => d.delivery_status === "2"));
@@ -234,7 +238,26 @@ const DeliveryManagementPage: React.FC = () => {
                     <JewaText style={styles.noDeliveriesText}>No pending deliveries</JewaText>
                 )}
             </View>
-
+            <View style={[styles.pendingDeliveriesContainer]}>
+                <JewaText style={{
+                    fontSize: 20,
+                    marginBottom: 10,
+                    fontFamily: 'Nunito_700Bold',
+                    color: Colors.primary,
+                }}>Picked deliveries</JewaText>
+                {deliveries.length > 0 ? (
+                    <FlatList
+                        data={deliveries}
+                        renderItem={renderPendingDeliveryItem}
+                        keyExtractor={item => item.id.toString()}
+                        style={{ marginBottom: 20 }}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                    />
+                ) : (
+                    <JewaText style={styles.noDeliveriesText}>No picked deliveries</JewaText>
+                )}
+            </View>
             <View style={styles.approvedDeliveriesContainer}>
                 <JewaText style={{
                     fontSize: 20,
@@ -244,16 +267,16 @@ const DeliveryManagementPage: React.FC = () => {
                 }}>Allowed deliveries</JewaText>
                 {deliveries.length > 0 ? (
                     <FlatList
+                        stickyHeaderHiddenOnScroll
                         data={deliveries}
                         renderItem={renderDeliveryItem}
                         keyExtractor={item => item.id.toString()}
-                        style={{ flex: 1, marginBottom: 40 }}
+                        style={{ marginBottom: 20 }} // Reduced margin as ScrollView adds spacing
                     />
                 ) : (
                     <JewaText style={styles.noDeliveriesText}>No approved deliveries</JewaText>
                 )}
             </View>
-
             <DeliveryTicket />
             <ApprovalModal />
         </SafeAreaView>
