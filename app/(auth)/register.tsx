@@ -28,6 +28,7 @@ function OTPVerification({ email, onVerificationSuccess }: any) {
         setLoading(true);
 
         try {
+            console.log("OTP verification:", otp, email);
             const response = await fetch('https://jewapropertypro.com/infinity/api/emailcodeconfirmation', {
                 method: 'POST',
                 headers: {
@@ -38,7 +39,9 @@ function OTPVerification({ email, onVerificationSuccess }: any) {
 
             const data = await response.json();
 
-            if (response.ok) {
+            console.log("OTP verification response:", data);
+
+            if (data.code === '200') {
                 Alert.alert("Success", "OTP verified successfully");
                 onVerificationSuccess();
             } else {
@@ -125,7 +128,12 @@ export default function Register() {
 
             const data = await response.json();
 
-            if (response.ok) {
+            if(data.message.email === "The email has already been taken."){
+                Alert.alert("Error", "User already exists");
+                return;
+            }
+
+            if (data.code === '200') {
                 Alert.alert("Success", "Registration successful. Please wait for approval");
                 setShowOTPVerification(true);
             } else {

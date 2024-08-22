@@ -49,7 +49,7 @@ export default function Home() {
         <View style={styles.container}>
             <View style={{ marginTop: 40, padding: 20 }}>
                 <View >
-                    <Image source={require('../assets/geti-bg.jpeg')} style={{
+                    <Image source={require('../assets/geti-bg.png')} style={{
                         width: '60%',
                         height: '60%',
                         marginLeft: 70,

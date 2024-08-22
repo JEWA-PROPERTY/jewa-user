@@ -51,16 +51,13 @@ export default function Login(): JSX.Element {
 
       const data: LoginResponse = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
-
-      if (data.userdetails && data.userdetails.length > 0) {
+      if (data.userdetails) {
         setUser(data.userdetails[0]);
         Alert.alert('Success', 'Login successful');
         router.replace('/(tabs)');
       } else {
-        throw new Error('User details not found in the response');
+        router.replace('/')
+        throw new Error('Failed to login, check your credentials and try again');
       }
     } catch (error) {
       console.error('Login error:', error);

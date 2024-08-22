@@ -30,11 +30,12 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
     const { user } = useUserStore();
 
     const fetchNotifications = async () => {
+        console.log("User ID:::", user?.userid)
         const response = await axios.post('https://jewapropertypro.com/infinity/api/allnotifications', {
-            resident_id: user?.userid
+            "resident_id": user?.userid
         });
-        console.log(response.data);
         const data = response.data;
+        console.log("Notifications Data:::", data.message);
         setNotifications(data.message);
         return data.message;
     };
@@ -221,7 +222,7 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
                             <JewaText>No notifications available</JewaText>
                         </View>
                     )}
-                    data={[]}
+                    data={notifications}
                     renderItem={renderNotificationItem}
                     keyExtractor={(item) => item.id.toString()}
                     contentContainerStyle={styles.listContainer}

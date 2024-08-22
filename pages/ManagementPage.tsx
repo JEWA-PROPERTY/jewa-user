@@ -190,7 +190,8 @@ const styles = StyleSheet.create({
   },
   alertDate: {
     fontSize: 12,
-    color: Colors.lightGray,
+    color: 'black',
+    fontFamily: 'Nunito_400Regular',
   },
   modalContainer: {
     flex: 1,
