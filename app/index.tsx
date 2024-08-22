@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, TouchableOpacity, Image, BackHandler, Text } from 'react-native';
 import { defaultStyles } from '~/constants/Styles';
 import { Link } from 'expo-router';
 import Colors from '~/constants/Colors';
@@ -45,6 +45,14 @@ export default function Home() {
         Nunito_900Black_Italic,
     });
 
+    useEffect(() => {
+        BackHandler.addEventListener('hardwareBackPress', function(){
+            BackHandler.exitApp();
+            return true;
+        });
+    }, []);
+
+
     return (
         <View style={styles.container}>
             <View style={{ marginTop: 40, padding: 20 }}>
@@ -57,13 +65,13 @@ export default function Home() {
                         objectFit: 'contain',
                     }} />
                 </View>
-                <JewaText style={[{
+                <Text style={[{
                     fontFamily: 'Nunito_700Bold',
                     fontSize: 40,
-                    JewaTextTransform: 'uppercase',
+                    textTransform: 'uppercase',
                     justifyContent: 'center',
-                    textAlign: 'center',
-                }]}>Geti App</JewaText>
+                    textAlign: 'center'
+                }]}>Geti App</Text>
                 <JewaText style={[{
                     fontFamily: 'Nunito_400Regular',
                     fontSize: 16,

@@ -99,8 +99,8 @@ const styles = StyleSheet.create({
     },
     header: {
         fontSize: 24,
-        fontWeight: 'bold',
         marginLeft: 16,
+        fontFamily: 'Nunito_700Bold',
     },
     listContainer: {
         padding: 16,

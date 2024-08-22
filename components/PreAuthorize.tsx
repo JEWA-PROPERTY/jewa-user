@@ -86,6 +86,7 @@ const PreAuthorizeVisitorModal = ({ isVisible, onClose, onSubmit, loading }: any
                             >
                                 <Picker.Item label="Walk" value="walk" />
                                 <Picker.Item label="Vehicle" value="vehicle" />
+                                <Picker.Item label="Motorcycle" value="motorcycle" />
                             </Picker>
                         </View>
 

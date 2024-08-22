@@ -55,13 +55,11 @@ export default function Login(): JSX.Element {
         setUser(data.userdetails[0]);
         Alert.alert('Success', 'Login successful');
         router.replace('/(tabs)');
-      } else {
-        router.replace('/')
-        throw new Error('Failed to login, check your credentials and try again');
-      }
+      } 
     } catch (error) {
       console.error('Login error:', error);
       Alert.alert('Login Failed', error instanceof Error ? error.message : 'An error occurred during login');
+      router.replace('/')
     } finally {
       setLoading(false);
     }

@@ -10,6 +10,7 @@ import JewaText from '~/components/JewaText';
 import CustomHeader from '~/components/CustomHeader';
 import { TabBarIcon } from '~/components/TabBarIcon';
 import { useUserStore } from '~/store/user-storage';
+import { useNavigation } from '@react-navigation/native';
 
 interface AlarmData {
   house_id: number;
@@ -95,6 +96,8 @@ const FloatingActionButton = () => {
     ],
   };
 
+  const navigation = useNavigation();
+
   return (
     <>
       <View style={styles.fabContainer}>
@@ -105,7 +108,9 @@ const FloatingActionButton = () => {
           </TouchableOpacity>
         </Animated.View>
         <Animated.View style={[styles.fabOption, authoriseVisitorStyle]}>
-          <TouchableOpacity style={styles.fabOptionButton} onPress={() => console.log('Authorise Visitor')}>
+          <TouchableOpacity style={styles.fabOptionButton} onPress={() => 
+            navigation.navigate('two', { screen: 'Visitors' })
+          }>
             <Ionicons name="person-add-outline" size={24} color={Colors.primary} />
             <JewaText style={styles.fabOptionText}>Authorise Visitor</JewaText>
           </TouchableOpacity>

@@ -79,7 +79,7 @@ export default function HomeTab() {
             <JewaText style={styles.summarySubJewaText}>At the gate</JewaText>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.summaryCard} onPress={() => router.push('/(tabs)/two')}>
+          <TouchableOpacity style={styles.summaryCard} onPress={() => router.push('/notifications')}>
             <Ionicons name="notifications" size={36} color="#FF9500" />
             <JewaText style={styles.summaryTitle}>Notifications</JewaText>
             <JewaText style={styles.summaryCount}>{pendingNotifications.length}</JewaText>
