@@ -2,61 +2,17 @@ import React from 'react';
 import { View, JewaText, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const issues = [
-    {
-        id: '1',
-        status: 'Pending',
-        type: 'General',
-        subject: 'I have not received water for 2 days',
-        inquiry: 'dddddsdss',
-        timeslot: '02:37:00',
-        availableDate: '2023-07-28',
-        location: 'Busia',
-    },
-    {
-        id: '2',
-        status: 'Resolved',
-        type: 'Technical',
-        subject: 'Internet connection issue',
-        inquiry: 'The connection is down',
-        timeslot: '12:00:00',
-        availableDate: '2023-07-25',
-        location: 'Nairobi',
-    },
-    {
-        id: '2',
-        status: 'Resolved',
-        type: 'Technical',
-        subject: 'Internet connection issue',
-        inquiry: 'The connection is down',
-        timeslot: '12:00:00',
-        availableDate: '2023-07-25',
-        location: 'Nairobi',
-    },
-    {
-        id: '2',
-        status: 'Pending',
-        type: 'Technical',
-        subject: 'Internet connection issue',
-        inquiry: 'The connection is down',
-        timeslot: '12:00:00',
-        availableDate: '2023-07-25',
-        location: 'Nairobi',
-    },
-    {
-        id: '2',
-        status: 'Resolved',
-        type: 'Technical',
-        subject: 'Internet connection issue',
-        inquiry: 'The connection is down',
-        timeslot: '12:00:00',
-        availableDate: '2023-07-25',
-        location: 'Nairobi',
-    },
-
-];
-
-const IssueCard = ({ issue }) => (
+type Issue = {
+    id: string;
+    status: string;
+    type: string;
+    location: string;
+    subject: string;
+    inquiry: string;
+    timeslot: string;
+    availableDate: string;
+};
+const IssueCard = ({ issue }: any) => (
     <View style={styles.issueCard}>
         <View style={styles.statusContainer}>
             <View style={styles.statusBadge}>

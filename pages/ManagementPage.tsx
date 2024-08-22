@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { View, ScrollView, TouchableOpacity, TextInput, Modal, StyleSheet } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, ScrollView, TouchableOpacity, TextInput, Modal, StyleSheet, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native';
 
 import Colors from '../constants/Colors';
 import JewaText from '../components/JewaText';
@@ -21,12 +22,15 @@ function ManagementScreen() {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const [isResolvingAlert, setIsResolvingAlert] = useState(false);
   const [newStatus, setNewStatus] = useState<'Pending' | 'Closed' | 'Rejected'>('Pending');
+  const [refreshing, setRefreshing] = useState(false);
 
   const user = useUserStore(state => state.user);
 
-  useEffect(() => {
-    fetchAlerts();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchAlerts();
+    }, [])
+  );
 
   const fetchAlerts = async () => {
     try {
@@ -35,13 +39,23 @@ function ManagementScreen() {
       });
       console.log('API Response:', response.data); // Log the response
       if (response.data) {
-        setAlerts(response.data.message);
+        const sortedAlerts = response.data.message.sort(
+          (a: Alert, b: Alert) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+        setAlerts(sortedAlerts);
       } else {
         console.error('Unexpected API response structure:', response.data);
       }
     } catch (error) {
       console.error('Error fetching alerts:', error);
+    } finally {
+      setRefreshing(false);
     }
+  };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchAlerts();
   };
 
   const updateAlert = async (alertId: number, subject: string, description: string, status: string) => {
@@ -64,7 +78,7 @@ function ManagementScreen() {
         <JewaText style={styles.alertSubject}>{alert.subject}</JewaText>
         <JewaText style={styles.alertDescription}>{alert.description}</JewaText>
         <JewaText style={styles.alertStatus}>Status: {alert.status}</JewaText>
-        <JewaText style={styles.alertDate}>Created: {new Date(alert.created_at).toLocaleDateString()}</JewaText>
+        <JewaText style={styles.alertDate}>Created: {new Date(alert.created_at).toLocaleString()}</JewaText>
       </View>
       <TouchableOpacity onPress={() => {
         setSelectedAlert(alert);
@@ -94,7 +108,11 @@ function ManagementScreen() {
           <Ionicons name="search" size={24} color={Colors.primary} />
         </TouchableOpacity>
       </View>
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {filteredAlerts.map(renderAlert)}
       </ScrollView>
 

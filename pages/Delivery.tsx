@@ -63,9 +63,9 @@ const DeliveryManagementPage: React.FC = () => {
             if (data && Array.isArray(data.message)) {
                 const fetchedDeliveries: Delivery[] = data.message;
                 console.log("Deliveries::", fetchedDeliveries)
-                setPendingDeliveries(fetchedDeliveries.filter(d => d.leaveatgate_status !== 'Picked' && d.delivery_status === "1" 
-                && d.resident_id === user?.userid));
-        
+                setPendingDeliveries(fetchedDeliveries.filter(d => d.leaveatgate_status !== 'Picked' && d.delivery_status === "1"
+                    && d.resident_id === user?.userid));
+
                 setDeliveries(fetchedDeliveries.filter(d => d.delivery_status === "2"));
             } else {
                 setPendingDeliveries([]);
@@ -107,7 +107,7 @@ const DeliveryManagementPage: React.FC = () => {
     const renderDeliveryItem = ({ item }: { item: Delivery }) => (
         <TouchableOpacity style={styles.deliveryItem} onPress={() => setSelectedDelivery(item)}>
             <View style={styles.deliveryIconContainer}>
-                <MaterialCommunityIcons name="package-variant" size={24} color={Colors.primary} />
+                <MaterialCommunityIcons name="package-variant" size={24} color={'white'} />
             </View>
             <View style={styles.deliveryInfo}>
                 <JewaText style={styles.deliveryName}>{item.type_of_delivery || 'Unknown Delivery'}</JewaText>
@@ -247,6 +247,7 @@ const DeliveryManagementPage: React.FC = () => {
                         data={deliveries}
                         renderItem={renderDeliveryItem}
                         keyExtractor={item => item.id.toString()}
+                        style={{ flex: 1, marginBottom: 40 }}
                     />
                 ) : (
                     <JewaText style={styles.noDeliveriesText}>No approved deliveries</JewaText>
@@ -281,7 +282,6 @@ const styles = StyleSheet.create({
     },
     approvedDeliveriesContainer: {
         flex: 1,
-        padding: 16,
     },
     sectionTitle: {
         marginBottom: 10,
@@ -304,9 +304,13 @@ const styles = StyleSheet.create({
     deliveryItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 16,
         borderBottomWidth: 1,
         borderBottomColor: '#eee',
+        backgroundColor: '#fff',
+        padding: 15,
+        marginVertical: 10,
+        borderRadius: 10,
+        width: '100%',
     },
     avatar: {
         width: 50,
@@ -426,13 +430,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
     },
-    sectionTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 16,
-        color: Colors.primary,
-    },
-
+    // sectionTitle: {
+    //     fontSize: 20,
+    //     fontWeight: 'bold',
+    //     marginBottom: 16,
+    //     color: Colors.primary,
+    // },
     pendingIconContainer: {
         width: 40,
         height: 40,
@@ -446,7 +449,7 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         borderRadius: 25,
-        backgroundColor: Colors.lightGray,
+        backgroundColor: Colors.primary,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 16,
