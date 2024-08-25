@@ -1,8 +1,8 @@
+import React, { useState } from 'react';
 import {
     KeyboardAvoidingView,
     Platform,
     View,
-    Text,
     TextInput,
     StyleSheet,
     TouchableOpacity,
@@ -10,10 +10,10 @@ import {
     Alert,
     ScrollView
 } from "react-native";
-import { useState } from "react";
-import { defaultStyles } from "~/constants/Styles";
+import { Ionicons } from '@expo/vector-icons'; // Make sure to install this package
 import Colors from "~/constants/Colors";
 import { router } from "expo-router";
+import JewaText from '~/components/JewaText';
 
 function OTPVerification({ email, onVerificationSuccess }: any) {
     const [otp, setOtp] = useState('');
@@ -28,7 +28,6 @@ function OTPVerification({ email, onVerificationSuccess }: any) {
         setLoading(true);
 
         try {
-            console.log("OTP verification:", otp, email);
             const response = await fetch('https://jewapropertypro.com/infinity/api/emailcodeconfirmation', {
                 method: 'POST',
                 headers: {
@@ -38,8 +37,6 @@ function OTPVerification({ email, onVerificationSuccess }: any) {
             });
 
             const data = await response.json();
-
-            console.log("OTP verification response:", data);
 
             if (data.code === '200') {
                 Alert.alert("Success", "OTP verified successfully");
@@ -56,31 +53,29 @@ function OTPVerification({ email, onVerificationSuccess }: any) {
     }
 
     return (
-        <View style={styles.otpContainer}>
-            <Text style={defaultStyles.header}>Verify Email</Text>
-            <Text style={defaultStyles.descriptionJewaText}>
+        <View style={styles.container}>
+            <JewaText style={styles.header}>Verify Email</JewaText>
+            <JewaText style={styles.description}>
                 Once you've been verified by management, you'll receive an OTP via email.
-            </Text>
+            </JewaText>
             <View style={styles.inputContainer}>
+                <Ionicons name="lock-closed-outline" size={24} color={Colors.gray} style={styles.icon} />
                 <TextInput
-                    style={[styles.input, { flex: 1 }]}
+                    style={styles.input}
                     placeholder="Enter 5-character OTP"
                     placeholderTextColor={Colors.gray}
-                    keyboardType="email-address"
+                    keyboardType="number-pad"
                     maxLength={5}
                     value={otp}
                     onChangeText={setOtp}
                 />
             </View>
             <TouchableOpacity
-                style={[
-                    defaultStyles.pillButton,
-                    otp.length === 5 ? styles.enabled : styles.disabled,
-                ]}
+                style={[styles.button, otp.length === 5 ? styles.enabled : styles.disabled]}
                 onPress={verifyOTP}
-                disabled={loading}>
+                disabled={loading || otp.length !== 5}>
                 {loading ? <ActivityIndicator size="small" color={'white'} /> :
-                    <Text style={defaultStyles.buttonJewaText}>Verify OTP</Text>
+                    <JewaText style={styles.buttonText}>Verify OTP</JewaText>
                 }
             </TouchableOpacity>
         </View>
@@ -128,7 +123,7 @@ export default function Register() {
 
             const data = await response.json();
 
-            if(data.message.email === "The email has already been taken."){
+            if(data.message && data.message.email === "The email has already been taken."){
                 Alert.alert("Error", "User already exists");
                 return;
             }
@@ -164,68 +159,70 @@ export default function Register() {
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
-            behavior="padding"
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             keyboardVerticalOffset={keyboardVerticalOffset}>
-            <ScrollView style={defaultStyles.container} className="mt-9">
-                <Text style={defaultStyles.header}>Create an Account</Text>
-                <Text style={defaultStyles.descriptionJewaText}>
-                    Enter your email, phone, and password to register
-                </Text>
+            <ScrollView style={styles.container}>
+                <JewaText style={styles.header}>Create an Account</JewaText>
+                <JewaText style={styles.description}>
+                    Enter your details to register
+                </JewaText>
                 <View style={styles.inputContainer}>
+                    <Ionicons name="person-outline" size={24} color={Colors.gray} style={styles.icon} />
                     <TextInput
-                        style={[styles.input, { flex: 1 }]}
-                        placeholder="Email"
-                        placeholderTextColor={Colors.gray}
-                        keyboardType="email-address"
-                        value={email}
-                        onChangeText={setEmail}
-                    />
-                </View>
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        style={[styles.input, { flex: 1 }]}
+                        style={styles.input}
                         placeholder="First Name"
                         placeholderTextColor={Colors.gray}
-                        keyboardType="email-address"
                         value={fname}
                         onChangeText={setFName}
                     />
                 </View>
                 <View style={styles.inputContainer}>
+                    <Ionicons name="person-outline" size={24} color={Colors.gray} style={styles.icon} />
                     <TextInput
-                        style={[styles.input, { flex: 1 }]}
+                        style={styles.input}
                         placeholder="Last Name"
                         placeholderTextColor={Colors.gray}
-                        keyboardType="email-address"
                         value={lname}
                         onChangeText={setLName}
                     />
                 </View>
-
                 <View style={styles.inputContainer}>
+                    <Ionicons name="mail-outline" size={24} color={Colors.gray} style={styles.icon} />
                     <TextInput
-                        style={[styles.input, { flex: 1 }]}
-                        placeholder="Community Code"
+                        style={styles.input}
+                        placeholder="Email"
                         placeholderTextColor={Colors.gray}
                         keyboardType="email-address"
-                        value={code}
-                        onChangeText={setCode}
+                        value={email}
+                        onChangeText={setEmail}
+                        autoCapitalize="none"
                     />
                 </View>
-         
                 <View style={styles.inputContainer}>
+                    <Ionicons name="call-outline" size={24} color={Colors.gray} style={styles.icon} />
                     <TextInput
-                        style={[styles.input, { flex: 1 }]}
+                        style={styles.input}
                         placeholder="Phone"
                         placeholderTextColor={Colors.gray}
-                        keyboardType="numeric"
+                        keyboardType="phone-pad"
                         value={phone}
                         onChangeText={setPhone}
                     />
                 </View>
                 <View style={styles.inputContainer}>
+                    <Ionicons name="business-outline" size={24} color={Colors.gray} style={styles.icon} />
                     <TextInput
-                        style={[styles.input, { flex: 1 }]}
+                        style={styles.input}
+                        placeholder="Community Code"
+                        placeholderTextColor={Colors.gray}
+                        value={code}
+                        onChangeText={setCode}
+                    />
+                </View>
+                <View style={styles.inputContainer}>
+                    <Ionicons name="lock-closed-outline" size={24} color={Colors.gray} style={styles.icon} />
+                    <TextInput
+                        style={styles.input}
                         placeholder="Password"
                         placeholderTextColor={Colors.gray}
                         secureTextEntry
@@ -234,8 +231,9 @@ export default function Register() {
                     />
                 </View>
                 <View style={styles.inputContainer}>
+                    <Ionicons name="lock-closed-outline" size={24} color={Colors.gray} style={styles.icon} />
                     <TextInput
-                        style={[styles.input, { flex: 1 }]}
+                        style={styles.input}
                         placeholder="Confirm Password"
                         placeholderTextColor={Colors.gray}
                         secureTextEntry
@@ -245,43 +243,79 @@ export default function Register() {
                 </View>
                 <TouchableOpacity
                     style={[
-                        defaultStyles.pillButton,
+                        styles.button,
                         (email !== '' && phone !== '' && password !== '' && confirmPassword !== '') ? styles.enabled : styles.disabled,
-                        { marginBottom: 20 },
                     ]}
                     onPress={onRegisterPress}
                     disabled={loading || email === '' || phone === '' || password === '' || confirmPassword === ''}>
                     {loading ? <ActivityIndicator size="small" color={'white'} /> :
-                        <Text style={defaultStyles.buttonJewaText}>Register</Text>
+                        <JewaText style={styles.buttonText}>Register</JewaText>
                     }
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.loginLink} onPress={() => router.push('/login')}>
+                    <JewaText style={styles.linkText}>Already have an account? Sign In</JewaText>
                 </TouchableOpacity>
             </ScrollView>
         </KeyboardAvoidingView>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
-    inputContainer: {
-        marginVertical: 20,
-        flexDirection: 'row',
-    },
-    input: {
-        backgroundColor: Colors.lightGray,
+    container: {
+        flex: 1,
         padding: 20,
-        borderRadius: 16,
-        fontSize: 20,
+    },
+    header: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        marginTop: 40,
+    },
+    description: {
+        fontSize: 16,
+        color: Colors.gray,
+        marginBottom: 20,
+    },
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: Colors.lightGray,
+        marginBottom: 20,
+    },
+    icon: {
         marginRight: 10,
     },
-    enabled: {
+    input: {
+        flex: 1,
+        fontSize: 16,
+        paddingVertical: 10,
+    },
+    button: {
         backgroundColor: Colors.primary,
+        paddingVertical: 12,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    enabled: {
+        opacity: 1,
     },
     disabled: {
-        backgroundColor: Colors.gray,
+        opacity: 0.5,
     },
-    otpContainer: {
-        flex: 1,
-        justifyContent: 'center',
+    loginLink: {
         alignItems: 'center',
-        padding: 20,
+        marginTop: 20,
+        marginBottom: 40,
+    },
+    linkText: {
+        color: Colors.primary,
+        fontSize: 14,
     },
 });

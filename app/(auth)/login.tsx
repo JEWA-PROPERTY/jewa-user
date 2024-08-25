@@ -15,6 +15,7 @@ import Colors from '~/constants/Colors';
 import { defaultStyles } from '~/constants/Styles';
 import { useUserStore, UserDetails } from '~/store/user-storage';
 import JewaText from '~/components/JewaText';
+import { Ionicons } from '@expo/vector-icons';
 
 interface LoginResponse {
   message: string;
@@ -71,12 +72,10 @@ export default function Login(): JSX.Element {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={keyboardVerticalOffset}
     >
-      <View style={[defaultStyles.container, styles.container]}>
-        <JewaText style={styles.header}>Welcome back!</JewaText>
-        <JewaText style={defaultStyles.descriptionJewaText}>
-          Enter your email and password to sign in
-        </JewaText>
+      <View style={[styles.container]}>
+        <JewaText style={styles.header}>Log In to your account</JewaText>
         <View style={styles.inputContainer}>
+          <Ionicons name="mail-outline" size={24} color={Colors.gray} style={styles.icon} />
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -88,6 +87,7 @@ export default function Login(): JSX.Element {
           />
         </View>
         <View style={styles.inputContainer}>
+          <Ionicons name="lock-closed-outline" size={24} color={Colors.gray} style={styles.icon} />
           <TextInput
             style={styles.input}
             placeholder="Password"
@@ -99,7 +99,6 @@ export default function Login(): JSX.Element {
         </View>
         <TouchableOpacity
           style={[
-            defaultStyles.pillButton,
             styles.button,
             (email !== '' && password !== '') ? styles.enabled : styles.disabled,
           ]}
@@ -109,12 +108,12 @@ export default function Login(): JSX.Element {
           {loading ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
-            <JewaText style={defaultStyles.buttonJewaText}>Continue</JewaText>
+            <JewaText style={styles.buttonText}>Sign In</JewaText>
           )}
         </TouchableOpacity>
         <Link href="/(auth)/register" asChild>
           <TouchableOpacity style={styles.registerLink}>
-            <JewaText style={defaultStyles.JewaTextLink}>Don't have an account? Register</JewaText>
+            <JewaText style={styles.linkText}>Don't have an account? Sign Up</JewaText>
           </TouchableOpacity>
         </Link>
       </View>
@@ -124,34 +123,54 @@ export default function Login(): JSX.Element {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 100,
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
   },
   header: {
-    fontSize: 40,
-    fontFamily: 'Nunito_700Bold',
-    textTransform: 'uppercase',
-    marginBottom: 20,
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 30,
   },
   inputContainer: {
-    marginVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.lightGray,
+    marginBottom: 20,
+  },
+  icon: {
+    marginRight: 10,
   },
   input: {
-    backgroundColor: Colors.lightGray,
-    padding: 20,
-    borderRadius: 16,
-    fontSize: 20,
+    flex: 1,
+    fontSize: 16,
+    paddingVertical: 10,
   },
   button: {
-    marginVertical: 20,
+    backgroundColor: Colors.primary,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   enabled: {
-    backgroundColor: Colors.primary,
+    opacity: 1,
   },
   disabled: {
-    backgroundColor: Colors.gray,
+    opacity: 0.5,
   },
   registerLink: {
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 20,
+  },
+  linkText: {
+    color: Colors.primary,
+    fontSize: 14,
   },
 });
