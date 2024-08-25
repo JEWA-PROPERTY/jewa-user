@@ -204,6 +204,12 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => <Ionicons name="people" size={24} color={color} />,
           }}
         />
+        <Tabs.Screen
+          name="account"
+          options={{
+            title: 'Profile',
+            tabBarIcon: ({ color }) => <Ionicons name="settings" size={24} color={color} />,
+          }} />
       </Tabs>
       <FloatingActionButton />
     </>
