@@ -56,7 +56,7 @@ export default function Login(): JSX.Element {
         setUser(data.userdetails[0]);
         Alert.alert('Success', 'Login successful');
         router.replace('/(tabs)');
-      } 
+      }
     } catch (error) {
       console.error('Login error:', error);
       Alert.alert('Login Failed', error instanceof Error ? error.message : 'An error occurred during login');
@@ -116,6 +116,11 @@ export default function Login(): JSX.Element {
             <JewaText style={styles.linkText}>Don't have an account? Sign Up</JewaText>
           </TouchableOpacity>
         </Link>
+        <Link href="/(auth)/forgot-password" asChild>
+          <TouchableOpacity style={styles.loginLink}>
+            <JewaText style={styles.linkText}>Forgot Password?</JewaText>
+          </TouchableOpacity>
+        </Link>
       </View>
     </KeyboardAvoidingView>
   );
@@ -129,7 +134,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontFamily: 'Nunito_700Bold',
     marginBottom: 30,
   },
   inputContainer: {
@@ -144,8 +149,9 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 13,
     paddingVertical: 10,
+    fontFamily: 'Nunito_400Regular',
   },
   button: {
     backgroundColor: Colors.primary,
@@ -170,7 +176,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   linkText: {
-    color: Colors.primary,
+    color: 'black',
     fontSize: 14,
+  },
+  loginLink: {
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 40,
   },
 });

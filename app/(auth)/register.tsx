@@ -91,6 +91,8 @@ export default function Register() {
     const [fname, setFName] = useState('');
     const [lname, setLName] = useState('');
     const [code, setCode] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [showOTPVerification, setShowOTPVerification] = useState(false);
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 80 : 0;
 
@@ -123,7 +125,7 @@ export default function Register() {
 
             const data = await response.json();
 
-            if(data.message && data.message.email === "The email has already been taken."){
+            if (data.message && data.message.email === "The email has already been taken.") {
                 Alert.alert("Error", "User already exists");
                 return;
             }
@@ -162,7 +164,16 @@ export default function Register() {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             keyboardVerticalOffset={keyboardVerticalOffset}>
             <ScrollView style={styles.container}>
-                <JewaText style={styles.header}>Create an Account</JewaText>
+                <View style={styles.headerContainer}>
+                    <TouchableOpacity onPress={() =>
+                        router.push('/login')
+                    }
+                        style={{ marginRight: 20, marginTop: 30 }}
+                    >
+                        <Ionicons name="arrow-back-outline" size={24} color="#000" />
+                    </TouchableOpacity>
+                    <JewaText style={styles.header}>Create an Account</JewaText>
+                </View>
                 <JewaText style={styles.description}>
                     Enter your details to register
                 </JewaText>
@@ -225,10 +236,13 @@ export default function Register() {
                         style={styles.input}
                         placeholder="Password"
                         placeholderTextColor={Colors.gray}
-                        secureTextEntry
+                        secureTextEntry={!showPassword}
                         value={password}
                         onChangeText={setPassword}
                     />
+                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
+                        <Ionicons name={showPassword ? "eye-outline" : "eye-off-outline"} size={24} color={Colors.gray} />
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.inputContainer}>
                     <Ionicons name="lock-closed-outline" size={24} color={Colors.gray} style={styles.icon} />
@@ -236,10 +250,13 @@ export default function Register() {
                         style={styles.input}
                         placeholder="Confirm Password"
                         placeholderTextColor={Colors.gray}
-                        secureTextEntry
+                        secureTextEntry={!showConfirmPassword}
                         value={confirmPassword}
                         onChangeText={setConfirmPassword}
                     />
+                    <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)} style={styles.eyeIcon}>
+                        <Ionicons name={showConfirmPassword ? "eye-outline" : "eye-off-outline"} size={24} color={Colors.gray} />
+                    </TouchableOpacity>
                 </View>
                 <TouchableOpacity
                     style={[
@@ -255,6 +272,7 @@ export default function Register() {
                 <TouchableOpacity style={styles.loginLink} onPress={() => router.push('/login')}>
                     <JewaText style={styles.linkText}>Already have an account? Sign In</JewaText>
                 </TouchableOpacity>
+          
             </ScrollView>
         </KeyboardAvoidingView>
     );
@@ -263,18 +281,25 @@ export default function Register() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        padding: 30
+    },
+    headerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     header: {
         fontSize: 24,
-        fontWeight: 'bold',
+        fontFamily: 'Nunito_700Bold',
         marginBottom: 10,
         marginTop: 40,
+        width: '100%',
     },
     description: {
         fontSize: 16,
-        color: Colors.gray,
+        color: 'black',
         marginBottom: 20,
+        marginTop: 40,
+        fontFamily: 'Nunito_700Bold',
     },
     inputContainer: {
         flexDirection: 'row',
@@ -286,10 +311,15 @@ const styles = StyleSheet.create({
     icon: {
         marginRight: 10,
     },
+    eyeIcon: {
+        padding: 10,
+    },
     input: {
         flex: 1,
-        fontSize: 16,
+        fontSize: 12,
+        fontFamily: 'Nunito_400Regular',
         paddingVertical: 10,
+
     },
     button: {
         backgroundColor: Colors.primary,
@@ -315,7 +345,7 @@ const styles = StyleSheet.create({
         marginBottom: 40,
     },
     linkText: {
-        color: Colors.primary,
+        color: 'black',
         fontSize: 14,
     },
 });
