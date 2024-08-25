@@ -288,12 +288,13 @@ const styles = StyleSheet.create({
     },
     cardTitle: {
         fontSize: 18,
-        fontWeight: 'bold',
+        fontFamily: 'Nunito_700Bold',
         marginBottom: 8,
         color: Colors.primary,
     },
     cardText: {
         fontSize: 16,
+        fontFamily: 'Nunito_400Regular',
         marginBottom: 4,
         color: Colors.dark,
     },
@@ -315,6 +316,7 @@ const styles = StyleSheet.create({
     optionText: {
         flex: 1,
         fontSize: 16,
+        fontFamily: 'Nunito_400Regular',
         color: Colors.dark,
     },
     bottomOptions: {
@@ -336,7 +338,7 @@ const styles = StyleSheet.create({
     },
     modalTitle: {
         fontSize: 18,
-        fontWeight: 'bold',
+        fontFamily: 'Nunito_700Bold',
         marginBottom: 20,
         textAlign: 'center',
     },
@@ -346,6 +348,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         padding: 10,
         marginBottom: 10,
+        fontFamily: 'Nunito_400Regular',
     },
     button: {
         backgroundColor: Colors.primary,
@@ -356,7 +359,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: 'white',
-        fontWeight: 'bold',
+        fontFamily: 'Nunito_700Bold',
     },
     closeButton: {
         marginTop: 10,
@@ -364,6 +367,7 @@ const styles = StyleSheet.create({
     },
     closeButtonText: {
         color: Colors.primary,
+        fontFamily: 'Nunito_400Regular',
     },
     disabledButton: {
         opacity: 0.5,

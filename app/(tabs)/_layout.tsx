@@ -51,7 +51,7 @@ const FloatingActionButton = () => {
     setIsOpen(false);
     setAlarmData({
       ...alarmData,
-      house_id: 1,
+      house_id: user?.house_id!,
       resident_id: user?.userid!
     });
   };

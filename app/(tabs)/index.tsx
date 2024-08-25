@@ -16,7 +16,6 @@ export default function HomeTab() {
   const [communityUpdates, setCommunityUpdates] = useState([]);
 
   const residentName = user?.fullname || 'Resident';
-  const houseNumber = 'F-62';
   // console.log('user', alerts.length, pendingActions.length, pendingNotifications.length);
   useEffect(() => {
     const fetchData = async () => {
@@ -49,7 +48,7 @@ export default function HomeTab() {
         <View style={styles.header}>
           <View>
             <JewaText style={styles.welcomeJewaText}>Welcome, {residentName}</JewaText>
-            <JewaText style={styles.subJewaText}>House: {houseNumber}</JewaText>
+            <JewaText style={styles.subJewaText}>House: {user?.housename}</JewaText>
           </View>
         </View>
 

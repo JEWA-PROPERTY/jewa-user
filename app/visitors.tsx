@@ -90,7 +90,7 @@ const VisitorManagementPage: React.FC = () => {
     const payload = {
       phone: formData.phone,
       name: formData.name,
-      house_id: 1,
+      house_id: user?.house_id,
       resident_id: user?.userid,
       mode_of_entry: formData.mode_of_entry,
       vehicle_number: formData.vehicle_number,
