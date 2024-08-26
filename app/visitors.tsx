@@ -90,13 +90,15 @@ const VisitorManagementPage: React.FC = () => {
     const payload = {
       phone: formData.phone,
       name: formData.name,
-      house_id: user?.house_id,
+      house_id: user?.houseid,
       resident_id: user?.userid,
       mode_of_entry: formData.mode_of_entry,
       vehicle_number: formData.vehicle_number,
       verification_number: formData.verification_number,
       validity: formData.validity,
     };
+
+    console.log('Pre-authorize payload:', payload);
 
     try {
       const response = await fetch('https://jewapropertypro.com/infinity/api/preauthorisevisitor', {
@@ -182,7 +184,7 @@ const VisitorManagementPage: React.FC = () => {
           <JewaText style={styles.visitorName}>{item.name}</JewaText>
           <JewaText>Status: {item.prebooked_status}</JewaText>
           <JewaText>Validity: {item.validity || 0} days</JewaText>
-          {item.otp_status && <JewaText style={{ color: 'red' }}>OTP Revoked</JewaText>}
+          {/* {item.otp_status && <JewaText style={{ colors: Colors.primary }}>OTP Revoked: {item.otp_status}</JewaText>} */}
         </View>
         <View style={styles.actionButtons}>
           <TouchableOpacity onPress={() => callMobilePhone(item.phone)}>

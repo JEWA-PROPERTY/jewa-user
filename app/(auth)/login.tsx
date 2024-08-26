@@ -10,12 +10,12 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  Text
 } from 'react-native';
 import Colors from '~/constants/Colors';
 import { defaultStyles } from '~/constants/Styles';
-import { useUserStore, UserDetails } from '~/store/user-storage';
-import JewaText from '~/components/JewaText';
 import { Ionicons } from '@expo/vector-icons';
+import { UserDetails, useUserStore } from '~/store/user-storage';
 
 interface LoginResponse {
   message: string;
@@ -56,6 +56,10 @@ export default function Login(): JSX.Element {
         setUser(data.userdetails[0]);
         Alert.alert('Success', 'Login successful');
         router.replace('/(tabs)');
+      } else if (data.message === 'Your email has not been verified, please verify your email first') {
+        router.push('/pending-approval');
+      } else {
+        Alert.alert('Login Failed', 'Invalid email or password');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -73,7 +77,7 @@ export default function Login(): JSX.Element {
       keyboardVerticalOffset={keyboardVerticalOffset}
     >
       <View style={[styles.container]}>
-        <JewaText style={styles.header}>Log In to your account</JewaText>
+        <Text style={styles.header}>Log In to your account</Text>
         <View style={styles.inputContainer}>
           <Ionicons name="mail-outline" size={24} color={Colors.gray} style={styles.icon} />
           <TextInput
@@ -108,17 +112,17 @@ export default function Login(): JSX.Element {
           {loading ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
-            <JewaText style={styles.buttonText}>Sign In</JewaText>
+            <Text style={styles.buttonText}>Sign In</Text>
           )}
         </TouchableOpacity>
         <Link href="/(auth)/register" asChild>
           <TouchableOpacity style={styles.registerLink}>
-            <JewaText style={styles.linkText}>Don't have an account? Sign Up</JewaText>
+            <Text style={styles.linkText}>Don't have an account? Sign Up</Text>
           </TouchableOpacity>
         </Link>
         <Link href="/(auth)/forgot-password" asChild>
           <TouchableOpacity style={styles.loginLink}>
-            <JewaText style={styles.linkText}>Forgot Password?</JewaText>
+            <Text style={styles.linkText}>Forgot Password?</Text>
           </TouchableOpacity>
         </Link>
       </View>

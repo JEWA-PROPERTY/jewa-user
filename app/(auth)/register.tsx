@@ -10,13 +10,14 @@ import {
     Alert,
     ScrollView
 } from "react-native";
-import { Ionicons } from '@expo/vector-icons'; // Make sure to install this package
+import { Ionicons } from '@expo/vector-icons';
 import Colors from "~/constants/Colors";
 import { router } from "expo-router";
 import JewaText from '~/components/JewaText';
 
-function OTPVerification({ email, onVerificationSuccess }: any) {
+function OTPVerification({ email: initialEmail, onVerificationSuccess, onBack }: any) {
     const [otp, setOtp] = useState('');
+    const [email, setEmail] = useState(initialEmail || '');
     const [loading, setLoading] = useState(false);
 
     async function verifyOTP() {
@@ -25,7 +26,17 @@ function OTPVerification({ email, onVerificationSuccess }: any) {
             return;
         }
 
+        if (!email) {
+            Alert.alert("Error", "Please enter your email");
+            return;
+        }
+
         setLoading(true);
+
+        const payload = {
+            email: email,
+            code: otp
+        };
 
         try {
             const response = await fetch('https://jewapropertypro.com/infinity/api/emailcodeconfirmation', {
@@ -33,16 +44,18 @@ function OTPVerification({ email, onVerificationSuccess }: any) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, otp })
+                body: JSON.stringify(payload)
             });
 
             const data = await response.json();
 
-            if (data.code === '200') {
+            console.log('OTP Response', data);
+
+            if (data.message === 'Correct code, Wait for your account to be activated by management') {
                 Alert.alert("Success", "OTP verified successfully");
                 onVerificationSuccess();
             } else {
-                Alert.alert("Error", data.message || "OTP verification failed");
+                Alert.alert("", data.message || "OTP verification failed");
             }
         } catch (error) {
             console.error("OTP verification error:", error);
@@ -54,26 +67,44 @@ function OTPVerification({ email, onVerificationSuccess }: any) {
 
     return (
         <View style={styles.container}>
-            <JewaText style={styles.header}>Verify Email</JewaText>
+            <View style={styles.headerContainer}>
+                <TouchableOpacity onPress={onBack} style={{ marginRight: 20 }}>
+                    <Ionicons name="arrow-back-outline" size={24} color="#000" />
+                </TouchableOpacity>
+                <JewaText style={styles.header}>Verify Email</JewaText>
+            </View>
             <JewaText style={styles.description}>
                 Once you've been verified by management, you'll receive an OTP via email.
             </JewaText>
+            {!initialEmail && (
+                <View style={styles.inputContainer}>
+                    <Ionicons name="mail-outline" size={24} color={Colors.gray} style={styles.icon} />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Enter your email"
+                        placeholderTextColor={Colors.gray}
+                        keyboardType="email-address"
+                        value={email}
+                        onChangeText={setEmail}
+                        autoCapitalize="none"
+                    />
+                </View>
+            )}
             <View style={styles.inputContainer}>
                 <Ionicons name="lock-closed-outline" size={24} color={Colors.gray} style={styles.icon} />
                 <TextInput
                     style={styles.input}
                     placeholder="Enter 5-character OTP"
                     placeholderTextColor={Colors.gray}
-                    keyboardType="number-pad"
                     maxLength={5}
                     value={otp}
                     onChangeText={setOtp}
                 />
             </View>
             <TouchableOpacity
-                style={[styles.button, otp.length === 5 ? styles.enabled : styles.disabled]}
+                style={[styles.button, (otp.length === 5 && email) ? styles.enabled : styles.disabled]}
                 onPress={verifyOTP}
-                disabled={loading || otp.length !== 5}>
+                disabled={loading || otp.length !== 5 || !email}>
                 {loading ? <ActivityIndicator size="small" color={'white'} /> :
                     <JewaText style={styles.buttonText}>Verify OTP</JewaText>
                 }
@@ -155,7 +186,11 @@ export default function Register() {
     }
 
     if (showOTPVerification) {
-        return <OTPVerification email={email} onVerificationSuccess={handleVerificationSuccess} />;
+        return <OTPVerification 
+            email={email} 
+            onVerificationSuccess={handleVerificationSuccess} 
+            onBack={() => setShowOTPVerification(false)}
+        />;
     }
 
     return (
@@ -165,11 +200,7 @@ export default function Register() {
             keyboardVerticalOffset={keyboardVerticalOffset}>
             <ScrollView style={styles.container}>
                 <View style={styles.headerContainer}>
-                    <TouchableOpacity onPress={() =>
-                        router.push('/login')
-                    }
-                        style={{ marginRight: 20, marginTop: 30 }}
-                    >
+                    <TouchableOpacity onPress={() => router.push('/login')} style={{ marginRight: 20, marginTop: 30 }}>
                         <Ionicons name="arrow-back-outline" size={24} color="#000" />
                     </TouchableOpacity>
                     <JewaText style={styles.header}>Create an Account</JewaText>
@@ -272,7 +303,9 @@ export default function Register() {
                 <TouchableOpacity style={styles.loginLink} onPress={() => router.push('/login')}>
                     <JewaText style={styles.linkText}>Already have an account? Sign In</JewaText>
                 </TouchableOpacity>
-          
+                <TouchableOpacity style={styles.verifyLink} onPress={() => setShowOTPVerification(true)}>
+                    <JewaText style={styles.linkText}>Verify Code</JewaText>
+                </TouchableOpacity>
             </ScrollView>
         </KeyboardAvoidingView>
     );
@@ -319,7 +352,6 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontFamily: 'Nunito_400Regular',
         paddingVertical: 10,
-
     },
     button: {
         backgroundColor: Colors.primary,
@@ -342,6 +374,10 @@ const styles = StyleSheet.create({
     loginLink: {
         alignItems: 'center',
         marginTop: 20,
+    },
+    verifyLink: {
+        alignItems: 'center',
+        marginTop: 10,
         marginBottom: 40,
     },
     linkText: {

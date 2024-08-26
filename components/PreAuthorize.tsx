@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Modal, TouchableOpacity, TextInput, ScrollView, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Modal, TouchableOpacity, TextInput, ScrollView, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { defaultStyles } from '~/constants/Styles';
 import Colors from '~/constants/Colors';
 import JewaText from '~/components/JewaText';
@@ -16,8 +16,7 @@ const PreAuthorizeVisitorModal = ({ isVisible, onClose, onSubmit, loading }: any
         validity: '',
     });
 
-    //@ts-ignore
-    const handleChange = (key, value) => {
+    const handleChange = (key: string, value: string) => {
         setFormData(prevData => ({ ...prevData, [key]: value }));
     };
 
@@ -30,8 +29,11 @@ const PreAuthorizeVisitorModal = ({ isVisible, onClose, onSubmit, loading }: any
             vehicle_number: '',
             verification_number: '',
             validity: '',
-        })
-        onClose();
+        });
+    };
+
+    const isFormValid = () => {
+        return formData.phone !== '' && formData.name !== '' && formData.mode_of_entry !== '' && formData.validity !== '';
     };
 
     return (
@@ -41,9 +43,12 @@ const PreAuthorizeVisitorModal = ({ isVisible, onClose, onSubmit, loading }: any
             visible={isVisible}
             onRequestClose={onClose}
         >
-            <View style={styles.modalContainer}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={styles.modalContainer}
+            >
                 <View style={styles.modalContent}>
-                    <ScrollView>
+                    <ScrollView showsVerticalScrollIndicator={false}>
                         <View style={styles.modalHeader}>
                             <JewaText style={styles.modalTitle}>Pre-authorize Visitor</JewaText>
                             <TouchableOpacity onPress={onClose}>
@@ -52,9 +57,11 @@ const PreAuthorizeVisitorModal = ({ isVisible, onClose, onSubmit, loading }: any
                         </View>
 
                         <View style={styles.inputContainer}>
-                            <JewaText style={styles.label}>Phone</JewaText>
+                            <Ionicons name="call-outline" size={24} color={Colors.gray} style={styles.icon} />
                             <TextInput
                                 style={styles.input}
+                                placeholder="Phone"
+                                placeholderTextColor={Colors.gray}
                                 value={formData.phone}
                                 onChangeText={(text) => handleChange('phone', text)}
                                 keyboardType="phone-pad"
@@ -62,28 +69,36 @@ const PreAuthorizeVisitorModal = ({ isVisible, onClose, onSubmit, loading }: any
                         </View>
 
                         <View style={styles.inputContainer}>
-                            <JewaText style={styles.label}>Name</JewaText>
+                            <Ionicons name="person-outline" size={24} color={Colors.gray} style={styles.icon} />
                             <TextInput
                                 style={styles.input}
+                                placeholder="Name"
+                                placeholderTextColor={Colors.gray}
                                 value={formData.name}
                                 onChangeText={(text) => handleChange('name', text)}
                             />
                         </View>
+
                         <View style={styles.inputContainer}>
-                            <JewaText style={styles.label}>Validity in Days</JewaText>
+                            <Ionicons name="calendar-outline" size={24} color={Colors.gray} style={styles.icon} />
                             <TextInput
                                 style={styles.input}
+                                placeholder="Validity in Days"
+                                placeholderTextColor={Colors.gray}
                                 value={formData.validity}
                                 onChangeText={(text) => handleChange('validity', text)}
+                                keyboardType="numeric"
                             />
                         </View>
 
-                        <View style={styles.inputContainer}>
-                            <JewaText style={styles.label}>Mode of Entry:</JewaText>
+                        <View style={styles.pickerContainer}>
+                            <Ionicons name="car-outline" size={24} color={Colors.gray} style={styles.icon} />
                             <Picker
                                 selectedValue={formData.mode_of_entry}
-                                onValueChange={(itemValue: any) => handleChange('mode_of_entry', itemValue)}
+                                onValueChange={(itemValue: string) => handleChange('mode_of_entry', itemValue)}
+                                style={styles.picker}
                             >
+                                <Picker.Item label="Select Mode of Entry" value="" />
                                 <Picker.Item label="Walk" value="walk" />
                                 <Picker.Item label="Vehicle" value="vehicle" />
                                 <Picker.Item label="Motorcycle" value="motorcycle" />
@@ -91,32 +106,43 @@ const PreAuthorizeVisitorModal = ({ isVisible, onClose, onSubmit, loading }: any
                         </View>
 
                         {formData.mode_of_entry === 'vehicle' && (
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Vehicle Number"
-                                value={formData.vehicle_number}
-                                onChangeText={(text) => handleChange('vehicle_number', text)}
-                            />
+                            <View style={styles.inputContainer}>
+                                <Ionicons name="car-sport-outline" size={24} color={Colors.gray} style={styles.icon} />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Vehicle Number"
+                                    placeholderTextColor={Colors.gray}
+                                    value={formData.vehicle_number}
+                                    onChangeText={(text) => handleChange('vehicle_number', text)}
+                                />
+                            </View>
                         )}
 
                         <View style={styles.inputContainer}>
-                            <JewaText style={styles.label}>Verification Number</JewaText>
+                            <Ionicons name="shield-checkmark-outline" size={24} color={Colors.gray} style={styles.icon} />
                             <TextInput
                                 style={styles.input}
+                                placeholder="Verification Number"
+                                placeholderTextColor={Colors.gray}
                                 value={formData.verification_number}
                                 onChangeText={(text) => handleChange('verification_number', text)}
                             />
                         </View>
 
-                        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                            {
-                                loading ? <ActivityIndicator size="small" color="white" /> :
-                                    <JewaText style={styles.submitButtonText}>Submit</JewaText>
-                            }
+                        <TouchableOpacity
+                            style={[styles.submitButton, !isFormValid() && styles.disabledButton]}
+                            onPress={handleSubmit}
+                            disabled={loading || !isFormValid()}
+                        >
+                            {loading ? (
+                                <ActivityIndicator size="small" color="white" />
+                            ) : (
+                                <JewaText style={styles.submitButtonText}>Submit</JewaText>
+                            )}
                         </TouchableOpacity>
                     </ScrollView>
                 </View>
-            </View>
+            </KeyboardAvoidingView>
         </Modal>
     );
 };
@@ -130,8 +156,8 @@ const styles = StyleSheet.create({
     },
     modalContent: {
         backgroundColor: 'white',
-        borderRadius: 8,
-        padding: 16,
+        borderRadius: 16,
+        padding: 20,
         width: '90%',
         maxHeight: '80%',
     },
@@ -139,33 +165,48 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 16,
+        marginBottom: 20,
     },
     modalTitle: {
-        fontSize: 18,
-        fontFamily: 'Nunito_600SemiBold',
+        fontSize: 24,
+        fontFamily: 'Nunito_700Bold',
     },
     inputContainer: {
-        marginBottom: 16,
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: Colors.lightGray,
+        marginBottom: 20,
     },
-    label: {
-        fontSize: 14,
-        fontFamily: 'Nunito_600SemiBold',
-        marginBottom: 4,
+    icon: {
+        marginRight: 10,
     },
     input: {
-        ...defaultStyles.input,
-        backgroundColor: Colors.lightGray,
-        padding: 10,
-        borderRadius: 8,
+        flex: 1,
         fontSize: 16,
+        paddingVertical: 10,
+        fontFamily: 'Nunito_400Regular',
+    },
+    pickerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: Colors.lightGray,
+        marginBottom: 20,
+    },
+    picker: {
+        flex: 1,
+        marginLeft: -10,
     },
     submitButton: {
         backgroundColor: Colors.primary,
-        padding: 12,
+        paddingVertical: 12,
         borderRadius: 8,
         alignItems: 'center',
-        marginTop: 16,
+        marginTop: 20,
+    },
+    disabledButton: {
+        opacity: 0.5,
     },
     submitButtonText: {
         color: 'white',

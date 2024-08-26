@@ -24,6 +24,7 @@ export default function RootLayout() {
       <Stack.Screen name="deliveries" options={{ headerShown: false }} />
       <Stack.Screen name="visitors" options={{ headerShown: false }} />
       <Stack.Screen name="management" options={{ headerShown: false }} />
+      <Stack.Screen name="pending-approval" options={{ headerShown: false }} />
       <Stack.Screen name="notifications" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)/forgot-password" options={{ headerShown: false }} />
     </Stack>

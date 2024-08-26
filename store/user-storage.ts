@@ -33,7 +33,7 @@ export interface UserDetails {
   sessionstatus: string | null;
   usertype: string;
   usertype_id: string;
-  house_id: number;
+  houseid: number;
   housename: string;
   community_code: string;
 }
