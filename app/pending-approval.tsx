@@ -70,14 +70,13 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 22,
-        fontWeight: 'bold',
-        color: Colors.text,
+        fontFamily: 'Nunito_700Bold',
         textAlign: 'center',
         marginBottom: 10,
     },
     description: {
         fontSize: 16,
-        color: Colors.textSecondary,
+        fontFamily: 'Nunito_400Regular',
         textAlign: 'center',
         marginBottom: 30,
     },
@@ -92,7 +91,7 @@ const styles = StyleSheet.create({
     buttonText: {
         color: Colors.primary,
         fontSize: 16,
-        fontWeight: 'bold',
+        fontFamily: 'Nunito_700Bold',
     },
 });
 

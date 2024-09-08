@@ -1,11 +1,11 @@
-import { StyleSheet, View, ScrollView, TouchableOpacity, SafeAreaView, FlatList } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, SafeAreaView, FlatList, RefreshControl } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '~/constants/Colors';
 import { useUserStore } from '~/store/user-storage';
 import JewaText from '~/components/JewaText';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 export default function HomeTab() {
   const headerHeight = useHeaderHeight();
@@ -14,29 +14,36 @@ export default function HomeTab() {
   const [pendingNotifications, setPendingNotifications] = useState([]);
   const [alerts, setAlerts] = useState([]);
   const [communityUpdates, setCommunityUpdates] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   const residentName = user?.fullname || 'Resident';
-  // console.log('user', alerts.length, pendingActions.length, pendingNotifications.length);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch('https://jewapropertypro.com/infinity/api/residentdashboard', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ resident_id: user?.userid }),
+      });
+      const data = await response.json();
+      setPendingActions(data.pendingactions || []);
+      setPendingNotifications(data.pendingnotification || []);
+      setCommunityUpdates(data.communityupdates || []);
+      setAlerts(data.alert || []);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('https://jewapropertypro.com/infinity/api/residentdashboard', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ resident_id: user?.userid }),
-        });
-        const data = await response.json();
-        setPendingActions(data.pendingactions || []);
-        setPendingNotifications(data.pendingnotification || [])
-        setCommunityUpdates(data.communityupdates || []);
-        setAlerts(data.alert || []);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
     fetchData();
+  }, []);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchData().then(() => setRefreshing(false));
   }, []);
 
   return (
@@ -44,6 +51,9 @@ export default function HomeTab() {
       <ScrollView
         style={{ backgroundColor: Colors.background }}
         contentContainerStyle={{ paddingTop: headerHeight, flexGrow: 1, paddingBottom: 50 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         <View style={styles.header}>
           <View>
@@ -59,10 +69,6 @@ export default function HomeTab() {
               <Ionicons name="person-add-outline" size={24} color="white" />
               <JewaText style={styles.actionButtonJewaText}>Pre-authorize Visitor</JewaText>
             </TouchableOpacity>
-            {/* <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/management')}>
-              <Ionicons name="people-outline" size={24} color="white" />
-              <JewaText style={styles.actionButtonJewaText}></JewaText>
-            </TouchableOpacity> */}
             <TouchableOpacity style={styles.actionButton} onPress={() => router.push('/(tabs)/two')}>
               <Ionicons name="warning-outline" size={24} color="white" />
               <JewaText style={styles.actionButtonJewaText}>Report Issue</JewaText>

@@ -1,6 +1,6 @@
 // Login.tsx
 import React, { useState, useEffect } from 'react';
-import { router, Link } from 'expo-router';
+import { router, Link, Redirect } from 'expo-router';
 import {
   View,
   StyleSheet,
@@ -29,12 +29,12 @@ export default function Login(): JSX.Element {
   const keyboardVerticalOffset: number = Platform.OS === 'ios' ? 80 : 0;
   const { user, setUser } = useUserStore();
 
-  useEffect(() => {
-    // Check if user is already logged in
-    if (user) {
-      router.replace('/(tabs)');
-    }
-  }, [user]);
+  if (user) {
+    // router.replace('/(tabs)');
+    return (
+      <Redirect href="/(tabs)" />
+    )
+  }
 
   const onSignInPress = async (): Promise<void> => {
     setLoading(true);

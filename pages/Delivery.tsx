@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, FlatList, SafeAreaView, Image, Modal, ActivityIndicator, ScrollView } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, StyleSheet, TouchableOpacity, FlatList, SafeAreaView, Image, Modal, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { defaultStyles } from '~/constants/Styles';
 import Colors from '~/constants/Colors';
@@ -35,13 +35,10 @@ const DeliveryManagementPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [selectedDelivery, setSelectedDelivery] = useState<Delivery | null>(null);
     const [showApprovalModal, setShowApprovalModal] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const { user } = useUserStore();
 
-    useEffect(() => {
-        fetchDeliveries();
-    }, []);
-
-    const fetchDeliveries = async () => {
+    const fetchDeliveries = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
@@ -81,7 +78,16 @@ const DeliveryManagementPage: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [user?.userid]);
+
+    useEffect(() => {
+        fetchDeliveries();
+    }, [fetchDeliveries]);
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        fetchDeliveries().then(() => setRefreshing(false));
+    }, [fetchDeliveries]);
 
     const approveDelivery = (delivery: Delivery) => {
         setDeliveries([...deliveries, { ...delivery, delivery_status: '2' }]);
@@ -144,11 +150,9 @@ const DeliveryManagementPage: React.FC = () => {
                         <JewaText style={styles.ticketTitle}>{selectedDelivery?.type_of_delivery || 'Unknown Delivery'}</JewaText>
                     </View>
                     <View style={styles.ticketRow}>
-
                         <JewaText style={styles.ticketDetail}>Time In: {new Date(selectedDelivery?.time_in || '').toLocaleString()}</JewaText>
                     </View>
                     <View style={styles.ticketRow}>
-
                         <JewaText style={styles.ticketDetail}>Time Out: {new Date(selectedDelivery?.time_out || '').toLocaleString()}</JewaText>
                     </View>
                     <View style={styles.ticketRow}>
@@ -158,7 +162,6 @@ const DeliveryManagementPage: React.FC = () => {
                         <JewaText style={styles.ticketDetail}> OTP:{selectedDelivery?.otp || 'N/A'}</JewaText>
                     </View>
                     <View style={styles.ticketRow}>
-
                         <JewaText style={styles.ticketDetail}> Phone:{selectedDelivery?.delivery_phone}</JewaText>
                     </View>
                     <View style={styles.ticketRow}>
@@ -219,64 +222,70 @@ const DeliveryManagementPage: React.FC = () => {
 
     return (
         <SafeAreaView style={defaultStyles.container}>
-            <View style={styles.pendingDeliveriesContainer}>
-                <JewaText style={{
-                    fontSize: 20,
-                    marginBottom: 10,
-                    fontFamily: 'Nunito_700Bold',
-                    color: Colors.primary,
-                }}>Pending pick up at the gate</JewaText>
-                {pendingDeliveries.length > 0 ? (
-                    <FlatList
-                        data={pendingDeliveries}
-                        renderItem={renderPendingDeliveryItem}
-                        keyExtractor={item => item.id.toString()}
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                    />
-                ) : (
-                    <JewaText style={styles.noDeliveriesText}>No pending deliveries</JewaText>
-                )}
-            </View>
-            <View style={[styles.pendingDeliveriesContainer]}>
-                <JewaText style={{
-                    fontSize: 20,
-                    marginBottom: 10,
-                    fontFamily: 'Nunito_700Bold',
-                    color: Colors.primary,
-                }}>Picked deliveries</JewaText>
-                {deliveries.length > 0 ? (
-                    <FlatList
-                        data={deliveries}
-                        renderItem={renderPendingDeliveryItem}
-                        keyExtractor={item => item.id.toString()}
-                        style={{ marginBottom: 20 }}
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                    />
-                ) : (
-                    <JewaText style={styles.noDeliveriesText}>No picked deliveries</JewaText>
-                )}
-            </View>
-            <View style={styles.approvedDeliveriesContainer}>
-                <JewaText style={{
-                    fontSize: 20,
-                    marginBottom: 10,
-                    fontFamily: 'Nunito_700Bold',
-                    color: Colors.primary,
-                }}>Allowed deliveries</JewaText>
-                {deliveries.length > 0 ? (
-                    <FlatList
-                        stickyHeaderHiddenOnScroll
-                        data={deliveries}
-                        renderItem={renderDeliveryItem}
-                        keyExtractor={item => item.id.toString()}
-                        style={{ marginBottom: 20 }} // Reduced margin as ScrollView adds spacing
-                    />
-                ) : (
-                    <JewaText style={styles.noDeliveriesText}>No approved deliveries</JewaText>
-                )}
-            </View>
+            <ScrollView
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
+            >
+                <View style={styles.pendingDeliveriesContainer}>
+                    <JewaText style={{
+                        fontSize: 20,
+                        marginBottom: 10,
+                        fontFamily: 'Nunito_700Bold',
+                        color: Colors.primary,
+                    }}>Pending pick up at the gate</JewaText>
+                    {pendingDeliveries.length > 0 ? (
+                        <FlatList
+                            data={pendingDeliveries}
+                            renderItem={renderPendingDeliveryItem}
+                            keyExtractor={item => item.id.toString()}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                        />
+                    ) : (
+                        <JewaText style={styles.noDeliveriesText}>No pending deliveries</JewaText>
+                    )}
+                </View>
+                <View style={[styles.pendingDeliveriesContainer]}>
+                    <JewaText style={{
+                        fontSize: 20,
+                        marginBottom: 10,
+                        fontFamily: 'Nunito_700Bold',
+                        color: Colors.primary,
+                    }}>Picked deliveries</JewaText>
+                    {deliveries.length > 0 ? (
+                        <FlatList
+                            data={deliveries}
+                            renderItem={renderPendingDeliveryItem}
+                            keyExtractor={item => item.id.toString()}
+                            style={{ marginBottom: 20 }}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                        />
+                    ) : (
+                        <JewaText style={styles.noDeliveriesText}>No picked deliveries</JewaText>
+                    )}
+                </View>
+                <View style={styles.approvedDeliveriesContainer}>
+                    <JewaText style={{
+                        fontSize: 20,
+                        marginBottom: 10,
+                        fontFamily: 'Nunito_700Bold',
+                        color: Colors.primary,
+                    }}>Allowed deliveries</JewaText>
+                    {deliveries.length > 0 ? (
+                        <FlatList
+                            stickyHeaderHiddenOnScroll
+                            data={deliveries}
+                            renderItem={renderDeliveryItem}
+                            keyExtractor={item => item.id.toString()}
+                            style={{ marginBottom: 20 }}
+                        />
+                    ) : (
+                        <JewaText style={styles.noDeliveriesText}>No approved deliveries</JewaText>
+                    )}
+                </View>
+            </ScrollView>
             <DeliveryTicket />
             <ApprovalModal />
         </SafeAreaView>
@@ -288,13 +297,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    loadingJewaText: {
+    loadingText: {
         marginTop: 10,
         fontSize: 16,
         color: Colors.gray,
         fontFamily: 'Nunito_600SemiBold',
     },
-    errorJewaText: {
+    errorText: {
         fontSize: 16,
         color: 'red',
         marginBottom: 10,
@@ -427,11 +436,11 @@ const styles = StyleSheet.create({
     denyButton: {
         backgroundColor: 'red',
     },
-    approvalButtonJewaText: {
+    approvalButtonText: {
         color: 'white',
         fontWeight: 'bold',
     },
-    noDeliveriesJewaText: {
+    noDeliveriesText: {
         fontStyle: 'italic',
         color: '#888',
         textAlign: 'center',
@@ -443,22 +452,11 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginTop: 20,
     },
-    retryButtonJewaText: {
-        color: 'white',
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
     retryButtonText: {
         color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',
     },
-    // sectionTitle: {
-    //     fontSize: 20,
-    //     fontWeight: 'bold',
-    //     marginBottom: 16,
-    //     color: Colors.primary,
-    // },
     pendingIconContainer: {
         width: 40,
         height: 40,
@@ -494,17 +492,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 5,
         fontFamily: 'Nunito_600SemiBold',
-    },
-    approvalButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
-        marginLeft: 5,
-    },
-    noDeliveriesText: {
-        fontStyle: 'italic',
-        color: '#888',
-        textAlign: 'center',
-        marginTop: 20,
     },
 });
 

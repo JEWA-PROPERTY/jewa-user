@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Modal } from 'react-native';
+import { View, FlatList, StyleSheet, TouchableOpacity, ActivityIndicator, Modal, Image} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import JewaText from '~/components/JewaText';
 import { useUserStore } from '~/store/user-storage';
@@ -101,6 +101,7 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
     };
 
     const handleApprove = async () => {
+        
         await respondToNotification(selectedNotification?.id!, 2)
         handleModalClose();
     };
@@ -163,6 +164,23 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ onNotificationPress
                 <View style={styles.modalContent}>
                     <JewaText style={styles.modalTitle}>Notification Details</JewaText>
                     <JewaText style={styles.modalMessage}>{selectedNotification?.notification_message}</JewaText>
+                    {selectedNotification?.notification_image === 'https://' || selectedNotification?.notification_image.includes("/tmp/")  ? (
+                        <Image source={{
+                            uri: 'https://placehold.co/200x200.png'
+                        }} 
+                        alt="Notification"
+                        width={200}
+                        height={200}
+                        />
+                    ) : (
+                        <Image source={{
+                            uri: selectedNotification?.notification_image
+                        }} 
+                        alt="Notification"
+                        width={200}
+                        height={200}
+                        />
+                    )}
                     {responding ? (
                         <ActivityIndicator size="large" color="#3498db" style={styles.respondingSpinner} />
                     ) : (
